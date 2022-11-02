@@ -18,7 +18,7 @@ Lv = 2.5*10**6 #J/kg latent heat of vaporization
 e0 = 0.611 #kPa
 g = 9.8
 cp = 1005 #J/kg*K
-x = 15 #to cut outliers
+x = 5 #to cut outliers
 p0 = 1000
 
 "DATA PREPROCESSING"
@@ -89,12 +89,31 @@ V = ws*np.cos(np.deg2rad(wd))
 
 #Creating TKE array 
 
+Cd = 0.005 #drag coefficient for praire
+h_bl = 1000 #change manually depending on where the inversion jump is
+w10 = U[:,0] #wind speed at 2m (should be at 10m, use interp once available)
+u_st = np.sqrt(Cd * w10**2)
+Up = np.zeros(height.shape)
+Vp = np.zeros(height.shape)
+
+for i in range(len(u_st)):
+    for j in range(0,x,1):
+        if height[i,j]<=h_bl:
+            Up[i,j] = 2*u_st[i]*(1-(height[i,j]/h_bl))**(3/4)
+            Vp[i,j] = 2.2*u_st[i]*(1-(height[i,j]/h_bl))**(3/4)
+        else: 
+            Up[i,j] = 0
+            Vp[i,j] = 0
+        
+tke = 1/2 * (Up**2 + Vp**2)
 
 "CREATING INPUT FILES"
 
 #interpolation
 
 #save to file 
+
+
 
 
 
@@ -152,6 +171,11 @@ plt.plot(thl_man[ind_min,0:x],height[ind_min,0:x], label='thl_man')
 plt.title("Liquid potential emperature on day_min")
 plt.legend()
 plt.show()
+
+plt.figure()
+plt.plot(tke[ind_min,0:x],height[ind_min,0:x])
+plt.title("TKE on day_min")
+
 # plt.figure()
 # plt.plot(temp[ind_max,0:x],height[ind_max,0:x])
 # plt.title("Temperature on day_max")
