@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import netCDF4 as nc
 import os
 import datetime
+from scipy.interpolate import interp1d
 
 R = 287 #[J/(kg*K)] dry air
 Rv = 461 #[J/(kg*K)] vapour
@@ -46,7 +47,7 @@ for i in range (len(ind)):
     dateList.append(date_1 + datetime.timedelta(days=rel_time[i]))
 # print(dateList)
 
-#Select days with clouds only 
+#Select days with clouds only
 temp = temp[ind]
 height = height[ind]
 DPD = DPD[ind]
@@ -58,19 +59,19 @@ ws = ws[ind]
 
 "CALCULATIONS"
 
-#translate dew point depression to specific and relative humidity 
+#translate dew point depression to specific and relative humidity
 T0 = 273.15
 Td = temp - DPD
 e = e0 *np.exp(Lv/Rv*(1/T0-1/Td))
 es = e0 *np.exp(Lv/Rv*(1/T0-1/temp)) #kPa
-RH = e/es 
+RH = e/es
 # q = 621.97/P * np.exp((Lv/Rv)*(Td-T0)/(Td*T0))
 # q = (0.622*e0)/P * np.exp((Lv/Rv)*((1/T0)-(1/Td)))
 
 q = R/Rv * es*10/P
 q = q/1000
 
-#calculate the liquid humidity 
+#calculate the liquid humidity
 ql = np.zeros(q.shape)
 
 for i in range(len(DPD)):
@@ -80,14 +81,14 @@ for i in range(len(DPD)):
 
 #translate temperature to potential liquid temperature
 thl = temp + g*height/cp - Lv*ql #chec if its the same with other version on the manual
-thl_man = (p0/P)**(R/cp) * (temp - Lv/cp *ql)             
+thl_man = (p0/P)**(R/cp) * (temp - Lv/cp *ql)
 #Calculate wind speed in x and y direction (U and V)
 
 #Probable issue: we don't know how the angle is defined (I assumed angle from north, usually it is the case)
 U = ws*np.sin(np.deg2rad(wd))
 V = ws*np.cos(np.deg2rad(wd))
 
-#Creating TKE array 
+#Creating TKE array
 
 Cd = 0.005 #drag coefficient for praire
 h_bl = 1000 #change manually depending on where the inversion jump is
@@ -101,17 +102,79 @@ for i in range(len(u_st)):
         if height[i,j]<=h_bl:
             Up[i,j] = 2*u_st[i]*(1-(height[i,j]/h_bl))**(3/4)
             Vp[i,j] = 2.2*u_st[i]*(1-(height[i,j]/h_bl))**(3/4)
-        else: 
+        else:
             Up[i,j] = 0
             Vp[i,j] = 0
-        
+
 tke = 1/2 * (Up**2 + Vp**2)
 
 "CREATING INPUT FILES"
 
+
+"CREATING INPUT FILES"
+
+profile = open("inputfiles/prof.inp.001.txt", "w")
+profile.write(" Dry Convective Boundary Layer LES Course Class 1\n \
+     height(m)   thl(K)     qt(kg/kg)       u(m/s)     v(m/s)     tke(m2/s2)\n")
+
+
+def format_num(n):
+    return '{:.7s}'.format('{:0.4f}'.format(n))
+
+def add_line(height, thl, qt, u, v, tke):
+
+    return "      " + format_num(height) + "      " \
+    + format_num(thl) + "      " + format_num(qt) + "      " \
+    + format_num(u) + "      " + format_num(v) + "      " \
+    + format_num(tke) + "\n"
+
+profile = open("inputfiles/prof.inp.001.txt", "a")
+
+def make_heights(height_base, step, iterations):
+
+    heights = []
+    heights.append(height_base)
+    for i in range(1, iterations):
+        heights.append(heights[i-1] + step)
+
+    return heights
+
+heights = make_heights(0, 200, 101)
+
+#interpolation
+# Interpolation function with plotted example. linspacetointerp is essentially the new x-space.
+
+def interpolate(xdataset, ydataset, linspacetointerp, linear=True):
+    kindtoUse = ''
+    if linear:
+        kindtoUse = 'linear'
+    else:
+        kindtoUse = 'cubic'
+
+    f = interp1d(xdataset, ydataset, kind = kindtoUse, fill_value='extrapolate')
+    # plt.plot(xdataset, ydataset, 'o', linspacetointerp, f(linspacetointerp), '-')
+    # plt.legend(['data', kindtoUse], loc='best')
+    # plt.show()
+    return f(linspacetointerp)
+
+print(height)
+
+interpthl = interpolate(height[0], thl[0], heights, linear=False)
+interpql = interpolate(height[0], ql[0], heights, linear=False)
+
+interpu = interpolate(height, U, heights, linear=False)
+interpv = interpolate(height, V, heights, linear=False)
+interptke = interpolate(height, tke, heights, linear=False)
+
+#save to file
+for i in range(0, 101):
+    profile.write(add_line(heights[i], interpthl[i], interpql[i], interpu[i], interpv[i], interptke[i]))
+
+
+
 #interpolation
 
-#save to file 
+#save to file
 
 
 
@@ -202,5 +265,3 @@ plt.title("TKE on day_min")
 # plt.figure()
 # plt.plot(ql[ind_max,0:x],height[ind_max,0:x])
 # plt.title("Liquid specific humidity on day_max")
-
-
