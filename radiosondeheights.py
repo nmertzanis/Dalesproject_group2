@@ -24,7 +24,7 @@ p0 = 100000 #Pa
 ########################################################################
 #Inmport Radiosonde Data - all relevant variables
 #soundigns from Jan 1 2008 thorugh Jan 1 2010
-rs_profiles = nc.Dataset('raob_soundings43790.cdf')
+rs_profiles = nc.Dataset('raob_soundings13628.cdf')
 variables = rs_profiles.variables
 #Variables from .nc files profiles
 lvls = rs_profiles['numMand']

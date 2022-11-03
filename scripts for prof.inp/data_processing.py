@@ -5,11 +5,17 @@ Created on Fri Oct 28 14:40:59 2022
 @author: Alessandro Pieruzzi
 """
 
+"TODO"
+# - Check height corresponds to right values -> what is ASTEX? 
+# - Check interpolation -> use vertical grid they used in the radtransf case (import that file and see how it works)
+# - Fix TKE 
+# - Fix plots and check everything makes sense
+# - Write input files 
+# - Run simulation
 
 import numpy as np
 import matplotlib.pyplot as plt
 import netCDF4 as nc
-import os
 import datetime
 from scipy.interpolate import interp1d
 
@@ -19,7 +25,7 @@ Lv = 2.5*10**6 #J/kg latent heat of vaporization
 e0 = 0.611 #kPa
 g = 9.8
 cp = 1005 #J/kg*K
-x = 5 #to cut outliers
+x = 15 #to cut outliers
 p0 = 1000
 
 "DATA PREPROCESSING"
@@ -32,29 +38,95 @@ P = np.array(profiles['prMan']) #hPa
 height = np.array(profiles['htMan'])
 wd = np.array(profiles['wdMan'])
 ws = np.array(profiles['wsMan'])
-
-
-#Find day with clouds:
-ind = np.where(DPD==0)[0]
 time = np.array(profiles['synTime'])
-time_day = time/86400
-rel_time = (time_day[ind]-time_day[0]) #days from 1/1/2008
 
+#Select days we use 
+
+#Create list of dates (to translate the time in seconds to the time in date format)
+time_day = time/86400
+rel_time = (time_day-time_day[0]) #days from 1/1/2008
 start_date = '1/1/08'
 date_1 = datetime.datetime.strptime(start_date, "%d/%m/%y")
 dateList = []
-for i in range (len(ind)):
+for i in range (len(rel_time)):
+    if rel_time[i] > rel_time[-1]:
+        rel_time[i] = (rel_time[i-1]+rel_time[i+1])/2 #fix outliers
     dateList.append(date_1 + datetime.timedelta(days=rel_time[i]))
-# print(dateList)
 
-#Select days with clouds only
-temp = temp[ind]
-height = height[ind]
-DPD = DPD[ind]
-P = P[ind]
-wd = wd[ind]
-ws = ws[ind]
+#Selected days for initial observations crossing with CCN plots:
+day_min = '28/02/09 12'
+day_max = '28/05/09'
+date_min = datetime.datetime.strptime(day_min, "%d/%m/%y %H")
+date_max = datetime.datetime.strptime(day_max, "%d/%m/%y")
 
+ind_min = np.where(np.array(dateList) == date_min)[0][0]
+ind_max = np.where(np.array(dateList) == date_max)[0][0]
+ind = np.array([ind_min, ind_max])
+
+#Select respective days in the data and remove the outliers
+temp = temp[ind,0:x] 
+DPD = DPD[ind,0:x]
+P = P[ind,0:x]
+height = height[ind,0:x]
+wd = wd[ind,0:x]
+ws = ws[ind,0:x]
+
+
+# #Find day with clouds (not used):
+# ind = np.where(DPD==0)[0]
+# time = np.array(profiles['synTime'])
+# time_day = time/86400
+# rel_time = (time_day[ind]-time_day[0]) #days from 1/1/2008
+
+# start_date = '1/1/08'
+# date_1 = datetime.datetime.strptime(start_date, "%d/%m/%y")
+# dateList = []
+# for i in range (len(ind)):
+#     dateList.append(date_1 + datetime.timedelta(days=rel_time[i]))
+# # print(dateList)
+
+# #Select days with clouds only (not used)
+# temp = temp[ind]
+# height = height[ind]
+# DPD = DPD[ind]
+# P = P[ind]
+# wd = wd[ind]
+# ws = ws[ind]
+
+"CREATING HEIGHTS AND INTERPOLATING the variables"
+
+#Using heights from example (radtransf, ASTEX)
+prof_ex = np.genfromtxt('prof_ex_radtransf.txt')
+z = prof_ex[:,0]
+
+#interpolation
+# Interpolation function with plotted example. linspacetointerp is essentially the new x-space.
+
+def interpolate(xdataset, ydataset, linspacetointerp, linear=True):
+    kindtoUse = ''
+    if linear:
+        kindtoUse = 'linear'
+    else:
+        kindtoUse = 'cubic'
+
+    f = interp1d(xdataset, ydataset, kind = kindtoUse, fill_value='extrapolate')
+    return f(linspacetointerp)
+
+
+#Obtain interpolated profiles for each day:
+dim = [len(ind), len(z)]
+temp_interp = np.zeros(dim)
+DPD_interp = np.zeros(dim)
+P_interp = np.zeros(dim)
+ws_interp = np.zeros(dim)
+wd_interp = np.zeros(dim)
+
+for i in range(len(ind)): 
+    temp_interp[i] = interpolate(height[i], temp[i], z, linear=False)
+    DPD_interp[i] = interpolate(height[i], DPD[i], z, linear=False)
+    P_interp[i] = interpolate(height[i], P[i], z, linear=False)
+    wd_interp[i] = interpolate(height[i], wd[i], z, linear=False)
+    ws_interp[i] = interpolate(height[i], ws[i], z, linear=False)
 
 
 "CALCULATIONS"
@@ -65,30 +137,30 @@ Td = temp - DPD
 e = e0 *np.exp(Lv/Rv*(1/T0-1/Td))
 es = e0 *np.exp(Lv/Rv*(1/T0-1/temp)) #kPa
 RH = e/es
-# q = 621.97/P * np.exp((Lv/Rv)*(Td-T0)/(Td*T0))
-# q = (0.622*e0)/P * np.exp((Lv/Rv)*((1/T0)-(1/Td)))
+q = (R/Rv * es*10/P)/1000 #[kg/kg]
 
-q = R/Rv * es*10/P
-q = q/1000
+# #calculate the liquid humidity (WRONG)
+# ql = np.zeros(q.shape)
 
-#calculate the liquid humidity
-ql = np.zeros(q.shape)
+# for i in range(len(DPD)):
+#     for j in range(0,22,1):
+#         if DPD[i,j]==0:
+#             ql[i,j] = q[i,j]
 
-for i in range(len(DPD)):
-    for j in range(0,22,1):
-        if DPD[i,j]==0:
-            ql[i,j] = q[i,j]
+# #translate temperature to potential liquid temperature
+# thl = temp + g*height/cp - Lv*ql #chec if its the same with other version on the manual
+# thl_man = (p0/P)**(R/cp) * (temp - Lv/cp *ql)
 
-#translate temperature to potential liquid temperature
-thl = temp + g*height/cp - Lv*ql #chec if its the same with other version on the manual
-thl_man = (p0/P)**(R/cp) * (temp - Lv/cp *ql)
+#Calculate potential temperature (clear case -> th = thl)
+thl = temp * (p0/P)**(R/cp)
+
 #Calculate wind speed in x and y direction (U and V)
 
-#Probable issue: we don't know how the angle is defined (I assumed angle from north, usually it is the case)
+#Angle assumed to be from the north 
 U = ws*np.sin(np.deg2rad(wd))
 V = ws*np.cos(np.deg2rad(wd))
 
-#Creating TKE array
+#Calculating TKE
 
 Cd = 0.005 #drag coefficient for praire
 h_bl = 1000 #change manually depending on where the inversion jump is
@@ -108,7 +180,6 @@ for i in range(len(u_st)):
 
 tke = 1/2 * (Up**2 + Vp**2)
 
-"CREATING INPUT FILES"
 
 
 "CREATING INPUT FILES"
@@ -130,51 +201,11 @@ def add_line(height, thl, qt, u, v, tke):
 
 profile = open("inputfiles/prof.inp.001.txt", "a")
 
-def make_heights(height_base, step, iterations):
-
-    heights = []
-    heights.append(height_base)
-    for i in range(1, iterations):
-        heights.append(heights[i-1] + step)
-
-    return heights
-
-heights = make_heights(0, 200, 101)
-
-#interpolation
-# Interpolation function with plotted example. linspacetointerp is essentially the new x-space.
-
-def interpolate(xdataset, ydataset, linspacetointerp, linear=True):
-    kindtoUse = ''
-    if linear:
-        kindtoUse = 'linear'
-    else:
-        kindtoUse = 'cubic'
-
-    f = interp1d(xdataset, ydataset, kind = kindtoUse, fill_value='extrapolate')
-    # plt.plot(xdataset, ydataset, 'o', linspacetointerp, f(linspacetointerp), '-')
-    # plt.legend(['data', kindtoUse], loc='best')
-    # plt.show()
-    return f(linspacetointerp)
-
-print(height)
-
-interpthl = interpolate(height[0], thl[0], heights, linear=False)
-interpql = interpolate(height[0], ql[0], heights, linear=False)
-
-interpu = interpolate(height, U, heights, linear=False)
-interpv = interpolate(height, V, heights, linear=False)
-interptke = interpolate(height, tke, heights, linear=False)
 
 #save to file
-for i in range(0, 101):
-    profile.write(add_line(heights[i], interpthl[i], interpql[i], interpu[i], interpv[i], interptke[i]))
+for i in range(len(z)):
+    profile.write(add_line(z[i], interpthl[i], interpq[i], interpu[i], interpv[i], interptke[i]))
 
-
-
-#interpolation
-
-#save to file
 
 
 
@@ -182,14 +213,6 @@ for i in range(0, 101):
 
 "PLOTTING PROFILES"
 
-#Selected days for initial observations crossing with CCN plots:
-day_min = '28/02/09 12'
-day_max = '28/05/09'
-date_min = datetime.datetime.strptime(day_min, "%d/%m/%y %H")
-date_max = datetime.datetime.strptime(day_max, "%d/%m/%y")
-
-ind_min = np.where(np.array(dateList) == date_min)[0][0]
-ind_max = np.where(np.array(dateList) == date_max)[0][0]
 
 #plots
 
@@ -198,7 +221,7 @@ plt.plot(DPD[ind_min,0:x],height[ind_min,0:x])
 plt.title("Dew point depression on day_min")
 
 plt.figure()
-plt.plot(temp[ind_min,0:x],height[ind_min,0:x])
+plt.plot(temp[ind_min,:],height[ind_min,:])
 plt.title("Temperature on day_min")
 plt.show()
 
