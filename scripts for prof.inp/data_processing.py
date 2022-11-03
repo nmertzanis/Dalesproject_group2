@@ -6,11 +6,8 @@ Created on Fri Oct 28 14:40:59 2022
 """
 
 "TODO"
-# - Check height corresponds to right values -> what is ASTEX? 
-# - Check interpolation -> use vertical grid they used in the radtransf case (import that file and see how it works)
-# - Fix hbl for TKE 
-# - Fix plots and check everything makes sense
-# - Write input files 
+# - what is ASTEX? 
+# - Check hbl for TKE 
 # - Run simulation
 
 import numpy as np
