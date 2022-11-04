@@ -67,11 +67,11 @@ select_indices = [t00max_index, t00min_index, t12max_index, t12min_index]
 ##########################################################################
 #Check whether stable or unstable
 def thl_vs_z(i, select_indices):
-        th = t[select_indices[i], :] * (p0/p[select_indices[i], :]) ** (Rd/cp)
-        plt.plot(th, ht[select_indices[i], :], label=str(datetime.utcfromtimestamp(ts[select_indices[i]]).strftime('%Y-%m-%d %H:%M:%S')))
-        plt.xlabel('Potential Temperature [K]')
-        plt.ylabel('Geopotential height [m]')
-        return th
+    th = t[select_indices[i], :] * (p0/p[select_indices[i], :]) ** (Rd/cp)
+    plt.plot(th, ht[select_indices[i], :], label=str(datetime.utcfromtimestamp(ts[select_indices[i]]).strftime('%Y-%m-%d %H:%M:%S')))
+    plt.xlabel('Potential Temperature [K]')
+    plt.ylabel('Geopotential height [m]')
+    return th
 
 # for i in range(len(select_indices)):
 #     th1 = thl_vs_z(i, select_indices)
@@ -90,20 +90,20 @@ heights = np.linspace(0, 20000, 101)
 
 
 def format_num(n):
-        return '{:.6s}'.format('{:0.3f}'.format(n))
+    return '{:.6s}'.format('{:0.3f}'.format(n))
 
 def add_line(height):
-        return "          " + format_num(height) + "      " + format_num(8) + "      " + format_num(0) + "      " + format_num(0) + "         " + format_num(0) + "              " + format_num(0)+ "      " + format_num(0)+ "      " + format_num(0)  +"\n"
+    return "          " + format_num(height) + "      " + format_num(8) + "      " + format_num(0) + "      " + format_num(0) + "         " + format_num(0) + "              " + format_num(0)+ "      " + format_num(0)+ "      " + format_num(0)  +"\n"
 
 def build_inp():
-        profile = open("inputfiles/lscale.inp.txt", "w")
-        profile.write(" Midnight with high concentrations 1\n \
+    profile = open("inputfiles/lscale.inp.txt", "w")
+    profile.write(" Midnight with high concentrations 1\n \
          height(m)   ugeo(m/s) vgeo(m/s)  wfls(m/s)    not_used   not_used   dqtdtls(kg/kg/s)    dthldt(K/s)\n")
     #profile.write(format_num(temperature[-1]) +  "      13 \n")
-        for i in range(0, len(heights)):
-            profile.write(add_line(heights[i]))
-            profile.close()
-            return profile
+    for i in range(0, len(heights)):
+        profile.write(add_line(heights[i]))
+    profile.close()
+    return profile
 
 # build_inp()
 
@@ -125,9 +125,6 @@ def interpolate(xdataset, ydataset, linspacetointerp, linear=True):
         return f(linspacetointerp)
 
 interpolate(ht, t, np.linspace(0, 12000, 100), linear=False)
-
-
-
 
 
 #########################################################################
