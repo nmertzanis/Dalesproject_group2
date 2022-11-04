@@ -1,6 +1,5 @@
  Midnight with high concentrations 1
           height(m)   ugeo(m/s) vgeo(m/s)  wfls(m/s)    not_used   not_used   dqtdtls(kg/kg/s)    dthldt(K/s)
-          0.000      8.000      0.000      0.000         0.000              0.000      0.000      0.000
           200.00      8.000      0.000      0.000         0.000              0.000      0.000      0.000
           400.00      8.000      0.000      0.000         0.000              0.000      0.000      0.000
           600.00      8.000      0.000      0.000         0.000              0.000      0.000      0.000

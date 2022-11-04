@@ -6,8 +6,8 @@ Created on Fri Oct 28 14:40:59 2022
 """
 
 "TODO"
-# - what is ASTEX? 
-# - Check hbl for TKE 
+# - what is ASTEX?
+# - Check hbl for TKE
 # - Run simulation
 
 import numpy as np
@@ -37,7 +37,7 @@ wd = np.array(profiles['wdMan'])
 ws = np.array(profiles['wsMan'])
 time = np.array(profiles['synTime'])
 
-#Select days we use 
+#Select days we use
 
 #Create list of dates (to translate the time in seconds to the time in date format)
 time_day = time/86400
@@ -61,7 +61,7 @@ ind_max = np.where(np.array(dateList) == date_max)[0][0]
 ind = np.array([ind_min, ind_max])
 
 #Select respective days in the data and remove the outliers
-temp = temp[ind,0:x] 
+temp = temp[ind,0:x]
 DPD = DPD[ind,0:x]
 P = P[ind,0:x]
 height = height[ind,0:x]
@@ -94,7 +94,9 @@ ws = ws[ind,0:x]
 
 #Using heights from example (radtransf, ASTEX)
 prof_ex = np.genfromtxt('prof_ex_radtransf.txt')
-z = prof_ex[:,0]
+# z = prof_ex[:,0]
+z = np.linspace(50, 9950, 199)
+print(z)
 
 #interpolation
 # Interpolation function with plotted example. linspacetointerp is essentially the new x-space.
@@ -118,7 +120,7 @@ P_interp = np.zeros(dim)
 ws_interp = np.zeros(dim)
 wd_interp = np.zeros(dim)
 
-for i in range(len(ind)): 
+for i in range(len(ind)):
     temp_interp[i] = interpolate(height[i], temp[i], z, linear=False)
     DPD_interp[i] = interpolate(height[i], DPD[i], z, linear=False)
     P_interp[i] = interpolate(height[i], P[i], z, linear=False)
@@ -166,7 +168,7 @@ thl = temp * (p0/P)**(R/cp)
 
 #Calculate wind speed in x and y direction (U and V)
 
-#Angle assumed to be from the north 
+#Angle assumed to be from the north
 U = ws*np.sin(np.deg2rad(wd))
 V = ws*np.cos(np.deg2rad(wd))
 
@@ -285,7 +287,7 @@ profile = open("prof.inp.001.txt", "a")
 
 
 #save to file
-for i in range(1,len(z),1):
+for i in range(0,len(z),1):
     profile.write(add_line(z[i], thl[0,i], q[0,i], U[0,i], V[0,i], tke[0,i]))
 
 
@@ -298,38 +300,5 @@ profile.write("#ASTEX case using prescribed vertical grid, Nlev = 427 1 date=" +
 profile = open("prof.inp.002.txt", "a")
 
 #save to file
-for i in range(1,len(z),1):
+for i in range(0,len(z),1):
     profile.write(add_line(z[i], thl[1,i], q[1,i], U[1,i], V[1,i], tke[1,i]))
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-
-

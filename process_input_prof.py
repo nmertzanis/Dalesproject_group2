@@ -1,8 +1,9 @@
 import numpy as np
 
-profile = open("input/prof.inp.cbl_fixed_grad.txt", "w")
-profile.write(" Dry Convective Boundary Layer LES Course Class 1\n \
-     height(m)   thl(K)     qt(kg/kg)       u(m/s)     v(m/s)     tke(m2/s2)\n")
+# Profile for day_min
+profile = open("prof.inp.001.txt", "w")
+profile.write("#ASTEX case using prescribed vertical grid, Nlev = 427 1\n \
+      height(m)   thl(K)     qt(kg/kg)       u(m/s)     v(m/s)     tke(m2/s2)\n")
 
 
 def format_num(n):
@@ -15,20 +16,20 @@ def add_line(height, thl, qt, u, v, tke):
     + format_num(u) + "      " + format_num(v) + "      " \
     + format_num(tke) + "\n"
 
-profile = open("input/prof.inp.cbl_fixed_grad.txt", "a")
+profile = open("input/prof.inp.001.txt", "a")
 
 #profile.write(add_line(10.4545654,1,1,1,1,1))
 
-def make_heights(height_base, iterations):
+def make_heights(height_base, step, iterations):
 
     heights = []
     heights.append(height_base)
     for i in range(1, iterations):
-        heights.append(heights[i-1] +   2 * height_base)
+        heights.append(heights[i-1] + step)
 
     return heights
 
-heights = make_heights(12.5, 128)
+heights = make_heights(0, 101)
 
 def make_rest(heights, delta_th, qta, qtb, ua, ub, va, vb, tkea, tkeb):
 
@@ -59,6 +60,7 @@ thls, qts, u, v, tke = make_rest(heights, delta_th=10, qta=0, qtb=0, ua=1, ub=1,
 
 for i in range(0, 80):
     profile.write(add_line(heights[i], thls[i], qts[i], u[i], v[i], tke[i]))
+
 
 
 profile.close()
