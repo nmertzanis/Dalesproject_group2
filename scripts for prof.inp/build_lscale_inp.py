@@ -21,7 +21,7 @@ def format_num(n):
     return '{:.6s}'.format('{:0.3f}'.format(n))
 
 def add_line(height):
-    return "          " + format_num(height) + "      " + format_num(1) + "      " + format_num(0) + "      " + format_num(0) + "         " + format_num(0) + "              " + format_num(0)+ "      " + format_num(0)+ "      " + format_num(0)  +"\n"
+    return "          " + format_num(height) + "      " + format_num(8) + "      " + format_num(0) + "      " + format_num(0) + "         " + format_num(0) + "              " + format_num(0)+ "      " + format_num(0)+ "      " + format_num(0)  +"\n"
 
 def build_inp():
     profile = open("../inputfiles/lscale.inp.txt", "w")

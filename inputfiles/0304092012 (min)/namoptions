@@ -1,17 +1,17 @@
 &RUN
-iexpnr     =  002
-runtime    =  1
+iexpnr     =  001
+runtime    =  1000
 dtmax      =  1.
 ladaptive  = .true.
 irandom    =  43
-randthl    =  0.001
-randqt     =  2.5e-8
+randthl    =  0.0001
+randqt     =  2.5e-10
 nsv        =  0
 /
 &DOMAIN
 itot       =  2 
 jtot       =  2
-kmax       =  427
+kmax       =  100
 xsize      =  1600.
 ysize      =  1600.
 xlat       =  34.
@@ -21,8 +21,8 @@ xtime      =  12.
 /
 &PHYSICS
 z0         =  2e-4
-ps         =  102900.
-thls       = 289
+ps         =  102700.
+thls       = 270.5
 lmoist     =  .true.
 irad       =  3
 timerad    =  1.
@@ -35,7 +35,7 @@ useMcICA   = .false.
 isurf      = 2
 z0mav      = 2e-4
 z0hav      = 2e-4
-ps         = 102900.
+ps         = 102190.
 albedoav   = 0.07
 /
 
@@ -46,7 +46,7 @@ l_rain          =  .true.
 l_sedc          =  .true.
 l_mur_cst       =  .false.
 mur_cst         =  0
-Nc_0            = 50e6
+Nc_0            = 100e6
 sig_g           = 1.2
 /
 &NAMBULKMICROSTAT
@@ -58,8 +58,8 @@ timeav          =  10
 &DYNAMICS
 llsadv     =  .false.
 lqlnr      =  .false.
-cu         =  -1
-cv         =  -7
+cu         =  0
+cv         =  0 
 
 iadv_mom    =  2
 iadv_tke    =  52
@@ -82,11 +82,11 @@ tcheck      = 5
 /
 &NAMTIMESTAT
 ltimestat   = .true.
-dtav        = 1 
+dtav        = 900 
 /
 &NAMGENSTAT
 lstat       = .true.
-dtav        = 1 
+dtav        = 1
 timeav      = 1
 /
 &NAMBUDGET
