@@ -440,7 +440,8 @@ profile = open("prof.inp.002.txt", "a")
 for i in range(0,len(z),1):
     if i < 8:
         profile.write(add_line(z[i], thl_c4[0,i], q_c4[0,i], U_c4[0,i], V_c4[0,i], tke[0,i]))
-    profile.write(add_line(z[i], thl[1,i], q[1,i], U[1,i], V[1,i], tke[1,i]))
+    else:
+        profile.write(add_line(z[i], thl[1,i], q[1,i], U[1,i], V[1,i], tke[1,i]))
 
 
 
