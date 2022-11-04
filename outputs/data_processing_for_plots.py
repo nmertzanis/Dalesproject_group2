@@ -6,9 +6,7 @@ Created on Fri Oct 28 14:40:59 2022
 """
 
 "TODO"
-# - what is ASTEX?
-# - Check hbl for TKE
-# - Run simulation
+
 
 import numpy as np
 import matplotlib.pyplot as plt

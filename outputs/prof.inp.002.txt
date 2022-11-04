@@ -1,0 +1,2 @@
+date=04/04/09 00
+height(m)   thl(K)     qt(kg/kg)       u(m/s)     v(m/s)     tke(m2/s2)

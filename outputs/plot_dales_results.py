@@ -20,6 +20,12 @@ import seaborn as sns
 
 sns.set()
 
+# - plots for whole profiles at the end of the simulation (done)
+# Plots for model every hour (first 200m)
+# Plots for Cabauw every hour (first 200m)
+# radiation timeseries (GHEYLLA)
+
+
 
 cp = 1005
 g = 9.8
@@ -42,23 +48,23 @@ cd = np.array([50, 1000]) #Cloud droplet numbers
 
 "IMPORT FILES"
 
-folder_path = r'E:\TUDELFT\2year\DALES\Final proj\Dalesproject_group2\outputs\day_min'  #enter your file path in this line
+folder_path = r'E:\TUDELFT\2year\DALES\Final_proj\Dalesproject_group2\outputs\day_min'  #enter your file path in this line
 list_of_files = os.listdir(folder_path)
 list_of_files = sorted(list_of_files)
 profiles = nc.Dataset(f' {folder_path}\{list_of_files[0]}')
 timeseries = nc.Dataset(f' {folder_path}\{list_of_files[1]}')
 
 "RETRIEVE VARIABLES"
-qt = np.array(profiles['qt'])[-1]
-ql = np.array(profiles['ql'])[-1]
-thv =  np.array(profiles['thv'])[-1]
-pres = np.array(profiles['presh'])[-1]
-thl = np.array(profiles['thl'])[-1]
+qt = np.array(profiles['qt'])
+ql = np.array(profiles['ql'])
+thv =  np.array(profiles['thv'])
+pres = np.array(profiles['presh'])
+thl = np.array(profiles['thl'])
 z = np.array(profiles['zm'])
-swu = np.array(profiles['swu'])[-1]
-swd = np.array(profiles['swd'])[-1]
-lwu = np.array(profiles['lwu'])[-1]
-lwd = np.array(profiles['lwd'])[-1]
+swu = np.array(profiles['swu'])
+swd = np.array(profiles['swd'])
+lwu = np.array(profiles['lwu'])
+lwd = np.array(profiles['lwd'])
 
 T = thv/(1+0.608*(qt-ql)) * ((pres)/p0)**(287/cp)
 
@@ -68,23 +74,23 @@ T = thv/(1+0.608*(qt-ql)) * ((pres)/p0)**(287/cp)
 
 "IMPORT FILES"
 
-folder_path = r'E:\TUDELFT\2year\DALES\Final proj\Dalesproject_group2\outputs\day_max'  #enter your file path in this line
+folder_path = r'E:\TUDELFT\2year\DALES\Final_proj\Dalesproject_group2\outputs\day_max'  #enter your file path in this line
 list_of_files = os.listdir(folder_path)
 list_of_files = sorted(list_of_files)
 profiles1 = nc.Dataset(f' {folder_path}\{list_of_files[0]}')
 timeseries1 = nc.Dataset(f' {folder_path}\{list_of_files[1]}')
 
 "RETRIEVE VARIABLES"
-qt1 = np.array(profiles['qt'])[-1]
-ql1 = np.array(profiles['ql'])[-1]
-thv1 =  np.array(profiles['thv'])[-1]
-pres1 = np.array(profiles['presh'])[-1]
-thl1 = np.array(profiles['thl'])[-1]
+qt1 = np.array(profiles['qt'])
+ql1 = np.array(profiles['ql'])
+thv1 =  np.array(profiles['thv'])
+pres1 = np.array(profiles['presh'])
+thl1 = np.array(profiles['thl'])
 z1 = np.array(profiles['zm'])
-swu1 = np.array(profiles1['swu'])[-1]
-swd1 = np.array(profiles1['swd'])[-1]
-lwu1 = np.array(profiles1['lwu'])[-1]
-lwd1 = np.array(profiles1['lwd'])[-1]
+swu1 = np.array(profiles1['swu'])
+swd1 = np.array(profiles1['swd'])
+lwu1 = np.array(profiles1['lwu'])
+lwd1 = np.array(profiles1['lwd'])
 
 T1 = thv1/(1+0.608*(qt1-ql1)) * ((pres1)/p0)**(287/cp)
 
@@ -93,6 +99,7 @@ T1 = thv1/(1+0.608*(qt1-ql1)) * ((pres1)/p0)**(287/cp)
 #######################################################################################################################################################
 
 "OBSERVATIONS"
+#Files are already cabauw and radiosondes merged together
 #Files to open are in outputs/obs: they are already correct for 7/1/09 at 00 and 4/4/09 at 00 (12h after the start of the simulation)
 obs_min = np.genfromtxt('obs/obs_min.txt')
 obs_max = np.genfromtxt('obs/obs_max.txt')
@@ -117,26 +124,24 @@ P1_obs = obs_max[1:,-1]
 
 "PLOTTING"
 
-#Plot the upward and downward fluxes of shortwave and longwave radiation, 
-# profiles: thl, q  
 
-
+"FINAL TIME STEP"
 #Radiation profiles:
 
 plt.figure(figsize=(7,6))
-plt.plot(swu,z, label = "DC = 50 cm^-3")
-plt.plot(swu1,z, label = "DC = 100 cm^-3")
-plt.plot(swd,z, label = "DC = 50 cm^-3")
-plt.plot(swd1,z, label = "DC = 100 cm^-3")
+plt.plot(swu[-1],z, label = "day min")
+plt.plot(swu1[-1],z, label = "day max")
+plt.plot(swd[-1],z, label = "day min")
+plt.plot(swd1[-1],z, label = "day max")
 plt.xlabel("Shortwave radiation flux [W/m^2]")
 plt.ylabel("Height [m]")
 plt.legend()
 
 plt.figure(figsize=(7,6))
-plt.plot(lwu,z, label = "DC = 50 cm^-3")
-plt.plot(lwu1,z, label = "DC = 100 cm^-3")
-plt.plot(lwd,z, label = "DC = 50 cm^-3")
-plt.plot(lwd1,z, label = "DC = 100 cm^-3")
+plt.plot(lwu[-1],z, label = "day min")
+plt.plot(lwu1[-1],z, label = "day max")
+plt.plot(lwd[-1],z, label = "day min")
+plt.plot(lwd1[-1],z, label = "day max")
 plt.xlabel("Longwave radiation flux [W/m^2]")
 plt.ylabel("Height [m]")
 plt.legend()
@@ -146,7 +151,7 @@ plt.legend()
 
 plt.figure()
 plt.plot(thl_obs, z, label = 'Observed profile' )
-plt.plot(thl, z,  '--' , label = 'Modeled profile')
+plt.plot(thl[-1], z,  '--' , label = 'Modeled profile')
 plt.title("Day_min")
 plt.xlabel("Thl [K]")
 plt.ylabel("Height [m]")
@@ -154,7 +159,7 @@ plt.legend()
 
 plt.figure()
 plt.plot(thl1_obs, z, label = 'Observed profile' )
-plt.plot(thl1, z,  '--' , label = 'Modeled profile')
+plt.plot(thl1[-1], z,  '--' , label = 'Modeled profile')
 plt.title("Day_max")
 plt.xlabel("Thl [K]")
 plt.ylabel("Height [m]")
@@ -163,7 +168,7 @@ plt.legend()
 
 plt.figure()
 plt.plot(q_obs, z, label = 'Observed profile' )
-plt.plot(qt, z,  '--' , label = 'Modeled profile')
+plt.plot(qt[-1], z,  '--' , label = 'Modeled profile')
 plt.title("Day_min")
 plt.xlabel("qt [kg/kg]")
 plt.ylabel("Height [m]")
@@ -171,13 +176,27 @@ plt.legend()
 
 plt.figure()
 plt.plot(q1_obs, z, label = 'Observed profile' )
-plt.plot(qt1, z,  '--' , label = 'Modeled profile')
+plt.plot(qt1[-1], z,  '--' , label = 'Modeled profile')
 plt.title("Day_max")
 plt.xlabel("qt [kg/kg]")
 plt.ylabel("Height [m]")
 plt.legend()
 
 
+"EVERY HOUR"
+
+
+#retrieve profiles for every hour: repeat interpolation procedure with cabauw data or save to file from the other script and re import it
+# or: run the other script first and then paste everything in the console (fast way)
+
+#Variables: thl_c1, thl_c4, q_c1, q_c4
+
+
+#for cycle from h12 t h00 every hour plots of:
+    #theta modeled vs observed day min
+    #theta modeled vs observed day max
+    #qt modeled vs observed day min
+    #qt modeled vs observed day max
 
 
 
