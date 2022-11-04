@@ -118,48 +118,22 @@ T1 = thl * (P/(p0/100)**(R/cp))
 # profiles: T, thl, q  
 
 
-
-plt.figure(figsize=(7,6))
-plt.plot(swu[-1],z, label = "Shortwave upwards radiation")
-plt.plot(swd[-1],z, label = "Shortwave downwards radiation")
-plt.xlabel("Radiation flux [W/m^2]")
-plt.ylabel("Height [m]")
-plt.legend()
-
-
-
-plt.figure(figsize=(7,6))
-plt.plot(lwu[-1],z, label = "Longwave upwards radiation")
-plt.plot(lwd[-1],z, label = "Longwave downwards radiation")
-plt.xlabel("Radiation flux [W/m^2]")
-plt.ylabel("Height [m]")
-plt.legend()
-
-
-
-
+#Radiation profiles:
 
 plt.figure(figsize=(7,6))
 plt.plot(swu[-1],z, label = "DC = 50 cm^-3")
 plt.plot(swu1[-1],z, label = "DC = 100 cm^-3")
-plt.plot(swu2[-1],z, label = "DC = 1000 cm^-3")
 plt.plot(swd[-1],z, label = "DC = 50 cm^-3")
 plt.plot(swd1[-1],z, label = "DC = 100 cm^-3")
-plt.plot(swd2[-1],z, label = "DC = 1000 cm^-3")
 plt.xlabel("Shortwave radiation flux [W/m^2]")
 plt.ylabel("Height [m]")
 plt.legend()
 
-
-
-
 plt.figure(figsize=(7,6))
 plt.plot(lwu[-1],z, label = "DC = 50 cm^-3")
 plt.plot(lwu1[-1],z, label = "DC = 100 cm^-3")
-plt.plot(lwu2[-1],z, label = "DC = 1000 cm^-3")
 plt.plot(lwd[-1],z, label = "DC = 50 cm^-3")
 plt.plot(lwd1[-1],z, label = "DC = 100 cm^-3")
-plt.plot(lwd2[-1],z, label = "DC = 1000 cm^-3")
 plt.xlabel("Longwave radiation flux [W/m^2]")
 plt.ylabel("Height [m]")
 plt.legend()
