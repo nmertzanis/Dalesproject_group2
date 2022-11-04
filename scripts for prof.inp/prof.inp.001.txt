@@ -1,5 +1,5 @@
-#ASTEX case using prescribed vertical grid, Nlev = 427 1
-       height(m)   thl(K)     qt(kg/kg)       u(m/s)     v(m/s)     tke(m2/s2)
+#ASTEX case using prescribed vertical grid, Nlev = 427 1 date06/01/09 12
+height(m)   thl(K)     qt(kg/kg)       u(m/s)     v(m/s)     tke(m2/s2)
       7.5000      268.445      3.038E-06      3.0911      -0.2638      0.2088
       22.5000      268.436      3.009E-06      3.3637      -0.2672      0.2041
       37.5000      268.431      2.981E-06      3.6264      -0.2665      0.1994

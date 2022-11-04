@@ -24,23 +24,25 @@ sns.set()
 cp = 1005
 g = 9.8
 Lv = 2.5*10**6
+cd = np.array([50, 1000]) #Cloud droplet numbers
+p0=10*5 #Pa this can be more precise
+
+
+
+
+#######################################################################################################################################################
+
+"DALES OUTPUTS"
 
 
 "DAY MIN"
 
 "IMPORT FILES"
 
-exp_ind = 0
-
-folder_path = r'E:\TUDELFT\2year\DALES\Final proj\Dalesproject_group2\outputs'  #enter your file path in this line
+folder_path = r'E:\TUDELFT\2year\DALES\Final proj\Dalesproject_group2\outputs\day_min'  #enter your file path in this line
 list_of_files = os.listdir(folder_path)
-list_of_files = sorted(list_of_files)
-
-cd = np.array([50, 1000]) #Cloud droplet number 
-file_index = np.array([0, 1]) + exp_ind 
-
-profiles = nc.Dataset(f' {folder_path}\{list_of_files[file_index[0]]}')
-timeseries = nc.Dataset(f' {folder_path}\{list_of_files[file_index[1]]}')
+profiles = nc.Dataset(f' {folder_path}\{list_of_files[0]}')
+timeseries = nc.Dataset(f' {folder_path}\{list_of_files[1]}')
 
 "RETRIEVE VARIABLES"
 qt = np.array(profiles['qt'])
@@ -51,72 +53,58 @@ thl = np.array(profiles['thl'])
 z = np.array(profiles['zm'])
 u = np.array(profiles['u'])
 v = np.array(profiles['v'])
-p0=10*5 #Pa
-
-T = thv/(1+0.608*(qt-ql)) * ((pres)/p0)**(287/cp)
-
 swu = np.array(profiles['swu'])
 swd = np.array(profiles['swd'])
 lwu = np.array(profiles['lwu'])
 lwd = np.array(profiles['lwd'])
+
+T = thv/(1+0.608*(qt-ql)) * ((pres)/p0)**(287/cp)
+
 
 
 "DAY MAX"
 
 "IMPORT FILES"
 
-exp_ind = 1
-
-file_index = np.array([0, 3]) + exp_ind #fix numbers
-
-profiles1 = nc.Dataset(f' {folder_path}\{list_of_files[file_index[0]]}')
-timeseries1 = nc.Dataset(f' {folder_path}\{list_of_files[file_index[1]]}')
-
+folder_path = r'E:\TUDELFT\2year\DALES\Final proj\Dalesproject_group2\outputs\day_max'  #enter your file path in this line
+list_of_files = os.listdir(folder_path)
+profiles1 = nc.Dataset(f' {folder_path}\{list_of_files[0]}')
+timeseries1 = nc.Dataset(f' {folder_path}\{list_of_files[1]}')
 
 "RETRIEVE VARIABLES"
-qt = np.array(profiles['qt'])
-ql = np.array(profiles['ql'])
-thv =  np.array(profiles['thv'])
-pres = np.array(profiles['presh'])
-thl = np.array(profiles['thl'])
-z = np.array(profiles['zm'])
-u = np.array(profiles['u'])
-v = np.array(profiles['v'])
-p0=10*5 #Pa
-
-T = thv/(1+0.608*(qt-ql)) * ((pres)/p0)**(287/cp)
-
+qt1 = np.array(profiles['qt'])
+ql1 = np.array(profiles['ql'])
+thv1 =  np.array(profiles['thv'])
+pres1 = np.array(profiles['presh'])
+thl1 = np.array(profiles['thl'])
+z1 = np.array(profiles['zm'])
+u1 = np.array(profiles['u'])
+v1 = np.array(profiles['v'])
 swu1 = np.array(profiles1['swu'])
 swd1 = np.array(profiles1['swd'])
 lwu1 = np.array(profiles1['lwu'])
 lwd1 = np.array(profiles1['lwd'])
 
+T1 = thv/(1+0.608*(qt-ql)) * ((pres)/p0)**(287/cp)
 
 
 
-"OTHER DAY"
+#######################################################################################################################################################
+
+"OBSERVATIONS"
+#Files to open are in outputs/obs
+
+
+
+"DAY MIN"
 
 "IMPORT FILES"
-exp_ind = 2
-
-file_index = np.array([0, 3]) + exp_ind 
-
-profiles2 = nc.Dataset(f' {folder_path}\{list_of_files[file_index[0]]}')
-timeseries2 = nc.Dataset(f' {folder_path}\{list_of_files[file_index[1]]}')
-
-"RETRIEVE VARIABLES"
-swu2 = np.array(profiles2['swu'])
-swd2 = np.array(profiles2['swd'])
-lwu2 = np.array(profiles2['lwu'])
-lwd2 = np.array(profiles2['lwd'])
-
-
 
 
 "PLOTTING"
 
 #Plot the upward and downward fluxes of shortwave and longwave radiation, 
-# profiles: T, thl, qt, ql,  
+# profiles: T, thl, q  
 
 
 

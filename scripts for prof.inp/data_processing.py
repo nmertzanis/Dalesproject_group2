@@ -264,8 +264,8 @@ plt.title("TKE")
 
 # Profile for day_min
 profile = open("prof.inp.001.txt", "w")
-profile.write("#ASTEX case using prescribed vertical grid, Nlev = 427 1\n \
-      height(m)   thl(K)     qt(kg/kg)       u(m/s)     v(m/s)     tke(m2/s2)\n")
+profile.write("#ASTEX case using prescribed vertical grid, Nlev = 427 1 date" + day_min +'\n' \
+      "height(m)   thl(K)     qt(kg/kg)       u(m/s)     v(m/s)     tke(m2/s2)\n")
 
 
 def format_num(n):
@@ -292,8 +292,8 @@ for i in range(1,len(z),1):
 
 # Profile for day_max
 profile = open("prof.inp.002.txt", "w")
-profile.write("#ASTEX case using prescribed vertical grid, Nlev = 427 1\n \
-      height(m)   thl(K)     qt(kg/kg)       u(m/s)     v(m/s)     tke(m2/s2)\n")
+profile.write("#ASTEX case using prescribed vertical grid, Nlev = 427 1 date=" + day_max + '\n' \
+      "height(m)   thl(K)     qt(kg/kg)       u(m/s)     v(m/s)     tke(m2/s2)\n")
 
 profile = open("prof.inp.002.txt", "a")
 
