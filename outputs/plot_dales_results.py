@@ -30,7 +30,7 @@ Lv = 2.5*10**6 #J/kg latent heat of vaporization
 e0 = 0.611 #kPa
 g = 9.8
 cp = 1005 #J/kg*K
-p0=10*5 #Pa this can be more precise
+p0=10**5 #Pa this can be more precise
 cd = np.array([50, 1000]) #Cloud droplet numbers
 
 #######################################################################################################################################################
@@ -44,22 +44,21 @@ cd = np.array([50, 1000]) #Cloud droplet numbers
 
 folder_path = r'E:\TUDELFT\2year\DALES\Final proj\Dalesproject_group2\outputs\day_min'  #enter your file path in this line
 list_of_files = os.listdir(folder_path)
+list_of_files = sorted(list_of_files)
 profiles = nc.Dataset(f' {folder_path}\{list_of_files[0]}')
 timeseries = nc.Dataset(f' {folder_path}\{list_of_files[1]}')
 
 "RETRIEVE VARIABLES"
-qt = np.array(profiles['qt'])
-ql = np.array(profiles['ql'])
-thv =  np.array(profiles['thv'])
-pres = np.array(profiles['presh'])
-thl = np.array(profiles['thl'])
-z = np.array(profiles['zm'])
-u = np.array(profiles['u'])
-v = np.array(profiles['v'])
-swu = np.array(profiles['swu'])
-swd = np.array(profiles['swd'])
-lwu = np.array(profiles['lwu'])
-lwd = np.array(profiles['lwd'])
+qt = np.array(profiles['qt'])[-1]
+ql = np.array(profiles['ql'])[-1]
+thv =  np.array(profiles['thv'])[-1]
+pres = np.array(profiles['presh'])[-1]
+thl = np.array(profiles['thl'])[-1]
+z = np.array(profiles['zm'])[-1]
+swu = np.array(profiles['swu'])[-1]
+swd = np.array(profiles['swd'])[-1]
+lwu = np.array(profiles['lwu'])[-1]
+lwd = np.array(profiles['lwd'])[-1]
 
 T = thv/(1+0.608*(qt-ql)) * ((pres)/p0)**(287/cp)
 
@@ -71,24 +70,23 @@ T = thv/(1+0.608*(qt-ql)) * ((pres)/p0)**(287/cp)
 
 folder_path = r'E:\TUDELFT\2year\DALES\Final proj\Dalesproject_group2\outputs\day_max'  #enter your file path in this line
 list_of_files = os.listdir(folder_path)
+list_of_files = sorted(list_of_files)
 profiles1 = nc.Dataset(f' {folder_path}\{list_of_files[0]}')
 timeseries1 = nc.Dataset(f' {folder_path}\{list_of_files[1]}')
 
 "RETRIEVE VARIABLES"
-qt1 = np.array(profiles['qt'])
-ql1 = np.array(profiles['ql'])
-thv1 =  np.array(profiles['thv'])
-pres1 = np.array(profiles['presh'])
-thl1 = np.array(profiles['thl'])
-z1 = np.array(profiles['zm'])
-u1 = np.array(profiles['u'])
-v1 = np.array(profiles['v'])
-swu1 = np.array(profiles1['swu'])
-swd1 = np.array(profiles1['swd'])
-lwu1 = np.array(profiles1['lwu'])
-lwd1 = np.array(profiles1['lwd'])
+qt1 = np.array(profiles['qt'])[-1]
+ql1 = np.array(profiles['ql'])[-1]
+thv1 =  np.array(profiles['thv'])[-1]
+pres1 = np.array(profiles['presh'])[-1]
+thl1 = np.array(profiles['thl'])[-1]
+z1 = np.array(profiles['zm'])[-1]
+swu1 = np.array(profiles1['swu'])[-1]
+swd1 = np.array(profiles1['swd'])[-1]
+lwu1 = np.array(profiles1['lwu'])[-1]
+lwd1 = np.array(profiles1['lwd'])[-1]
 
-T1 = thv/(1+0.608*(qt-ql)) * ((pres)/p0)**(287/cp)
+T1 = thv1/(1+0.608*(qt1-ql1)) * ((pres1)/p0)**(287/cp)
 
 
 
@@ -101,49 +99,83 @@ obs_max = np.genfromtxt('obs/obs_max.txt')
 
 
 "VARIABLES: DAY MIN"
-thl = obs_min[:,1]
-q = obs_min[:,2]
-P = obs_min[:,-1]
-T = thl * (P/(p0/100)**(R/cp))
+thl_obs = obs_min[:,1]
+q_obs = obs_min[:,2]
+P_obs = obs_min[:,-1]
+#We can't have T since we don't have ql measurements
+
 
 "VARIABLES: DAY MAX"
-thl1 = obs_max[:,1]
-q1 = obs_max[:,2]
-P1 = obs_max[:,-1]
-T1 = thl * (P/(p0/100)**(R/cp))
+thl1_obs = obs_max[:,1]
+q1_obs = obs_max[:,2]
+P1_obs = obs_max[:,-1]
+#We can't have T since we don't have ql measurements
+
+
+
+#######################################################################################################################################################
 
 "PLOTTING"
 
 #Plot the upward and downward fluxes of shortwave and longwave radiation, 
-# profiles: T, thl, q  
+# profiles: thl, q  
 
 
 #Radiation profiles:
 
 plt.figure(figsize=(7,6))
-plt.plot(swu[-1],z, label = "DC = 50 cm^-3")
-plt.plot(swu1[-1],z, label = "DC = 100 cm^-3")
-plt.plot(swd[-1],z, label = "DC = 50 cm^-3")
-plt.plot(swd1[-1],z, label = "DC = 100 cm^-3")
+plt.plot(swu,z, label = "DC = 50 cm^-3")
+plt.plot(swu1,z, label = "DC = 100 cm^-3")
+plt.plot(swd,z, label = "DC = 50 cm^-3")
+plt.plot(swd1,z, label = "DC = 100 cm^-3")
 plt.xlabel("Shortwave radiation flux [W/m^2]")
 plt.ylabel("Height [m]")
 plt.legend()
 
 plt.figure(figsize=(7,6))
-plt.plot(lwu[-1],z, label = "DC = 50 cm^-3")
-plt.plot(lwu1[-1],z, label = "DC = 100 cm^-3")
-plt.plot(lwd[-1],z, label = "DC = 50 cm^-3")
-plt.plot(lwd1[-1],z, label = "DC = 100 cm^-3")
+plt.plot(lwu,z, label = "DC = 50 cm^-3")
+plt.plot(lwu1,z, label = "DC = 100 cm^-3")
+plt.plot(lwd,z, label = "DC = 50 cm^-3")
+plt.plot(lwd1,z, label = "DC = 100 cm^-3")
 plt.xlabel("Longwave radiation flux [W/m^2]")
 plt.ylabel("Height [m]")
 plt.legend()
 
 
+#Observation and modeled profiles 
+
+plt.figure()
+plt.plot(thl_obs, z, label = 'Observed profile' )
+plt.plot(thl, z,  '-.-' , label = 'Modeled profile')
+plt.title("Day_min")
+plt.xlabel("Thl [K]")
+plt.ylabel("Height [m]")
+plt.legend()
+
+plt.figure()
+plt.plot(thl1_obs, z, label = 'Observed profile' )
+plt.plot(thl1, z,  '-.-' , label = 'Modeled profile')
+plt.title("Day_max")
+plt.xlabel("Thl [K]")
+plt.ylabel("Height [m]")
+plt.legend()
 
 
+plt.figure()
+plt.plot(q_obs, z, label = 'Observed profile' )
+plt.plot(qt, z,  '-.-' , label = 'Modeled profile')
+plt.title("Day_min")
+plt.xlabel("qt [kg/kg]")
+plt.ylabel("Height [m]")
+plt.legend()
 
-
-
+plt.figure()
+plt.plot(q1_obs, z, label = 'Observed profile' )
+plt.plot(qt1, z,  '-.-' , label = 'Modeled profile')
+plt.title("Day_max")
+plt.xlabel("qt [kg/kg]")
+plt.ylabel("Height [m]")
+plt.legend()
 
 
 
