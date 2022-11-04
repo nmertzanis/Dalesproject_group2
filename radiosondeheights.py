@@ -3,8 +3,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import netCDF4 as nc
-#import metpy.calc
-#from metpy.units import units
 #plt.rcParams["figure.figsize"] = 8, 8
 from datetime import datetime
 from scipy.interpolate import interp1d
@@ -119,7 +117,7 @@ def interpolate(xdataset, ydataset, linspacetointerp, linear=True):
             kindtoUse = 'linear'
         else:
             kindtoUse = 'cubic'
-    
+
         f = interp1d(xdataset, ydataset, kind = kindtoUse, fill_value='extrapolate')
         plt.plot(xdataset, ydataset, 'o', linspacetointerp, f(linspacetointerp), '-')
         plt.legend(['data', kindtoUse], loc='best')
