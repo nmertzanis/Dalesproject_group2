@@ -24,11 +24,14 @@ sns.set()
 cp = 1005
 g = 9.8
 Lv = 2.5*10**6
-cd = np.array([50, 1000]) #Cloud droplet numbers
+R = 287 #[J/(kg*K)] dry air
+Rv = 461 #[J/(kg*K)] vapour
+Lv = 2.5*10**6 #J/kg latent heat of vaporization
+e0 = 0.611 #kPa
+g = 9.8
+cp = 1005 #J/kg*K
 p0=10*5 #Pa this can be more precise
-
-
-
+cd = np.array([50, 1000]) #Cloud droplet numbers
 
 #######################################################################################################################################################
 
@@ -93,13 +96,21 @@ T1 = thv/(1+0.608*(qt-ql)) * ((pres)/p0)**(287/cp)
 
 "OBSERVATIONS"
 #Files to open are in outputs/obs
+obs_min = np.genfromtxt('obs/obs_min.txt')
+obs_max = np.genfromtxt('obs/obs_max.txt')
 
 
+"VARIABLES: DAY MIN"
+thl = obs_min[:,1]
+q = obs_min[:,2]
+P = obs_min[:,-1]
+T = thl * (P/(p0/100)**(R/cp))
 
-"DAY MIN"
-
-"IMPORT FILES"
-
+"VARIABLES: DAY MAX"
+thl1 = obs_max[:,1]
+q1 = obs_max[:,2]
+P1 = obs_max[:,-1]
+T1 = thl * (P/(p0/100)**(R/cp))
 
 "PLOTTING"
 
