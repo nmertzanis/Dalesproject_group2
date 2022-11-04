@@ -263,6 +263,33 @@ plt.title("TKE")
 
 "CREATING INPUT FILES"
 
+def format_brnum(n):
+    return '{:.10s}'.format('{:0.10f}'.format(n))
+
+def get_backrad_input(pressure, temperature, humidity):
+    # height = np.array(radiosonde['htMan'][daytime][0:12])
+    # pressure = np.array(radiosonde['prMan'][daytime][0:15])
+    # temperature = np.array(radiosonde['tpMan'][daytime][0:15])
+    # print(pressure)
+    # humidity = get_humidity(daytime)
+
+    # height = np.flip(height)
+    pressure = np.flip(pressure) * 100
+    temperature = np.flip(temperature)
+    humidity = np.flip(humidity)
+    ozone = np.array([1.23 * (10 ** (-6)), 0.51 * (10 ** (-6)), 2.07 * (10 ** (-7)), 1.52 * (10 ** (-7)), \
+    1.52 * (10 ** (-7)), 1.52 * (10 ** (-7)), 1.52 * (10 ** (-7)), 1.52 * (10 ** (-7)), 1.52 * (10 ** (-7)), \
+    1.52 * (10 ** (-7)), 1.52 * (10 ** (-7)), 1.52 * (10 ** (-7)), 1.52 * (10 ** (-7)), 1.52 * (10 ** (-7)), 1.52 * (10 ** (-7))])
+    water = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+    return pressure, temperature, humidity, ozone, water
+    # humidity = np.flip(humidity)
+
+def add_brline(pressure, temperature, humidity, ozone, water):
+
+    return format_brnum(pressure) + "      " +  format_brnum(temperature) + "      " +  format_brnum(humidity)\
+    + "      " +  format_brnum(ozone) + "      " + str(water) + "\n"
+
 
 # Profile for day_min
 profile = open("prof.inp.001.txt", "w")
@@ -302,3 +329,19 @@ profile = open("prof.inp.002.txt", "a")
 #save to file
 for i in range(0,len(z),1):
     profile.write(add_line(z[i], thl[1,i], q[1,i], U[1,i], V[1,i], tke[1,i]))
+profile.close()
+
+# brprofile = open("backradmax.inp.txt", "w")
+#
+#
+# currnum = 1
+#
+# pressure, temperature, humidity, ozone, water = get_backrad_input(P[currnum][0:15], temp[currnum][0:15], q[currnum][0:15])
+#
+# brprofile.write(format_num(temperature[-1]) +  "      15 \n")
+#
+#
+# for i in range(0, 15):
+#     brprofile.write(add_brline(pressure[i], temperature[i], humidity[i], ozone[i], water[i]))
+#
+# brprofile.close()

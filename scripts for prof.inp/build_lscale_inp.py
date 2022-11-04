@@ -12,6 +12,7 @@ from datetime import datetime
 
 prof = np.loadtxt('prof.inp.001.txt', skiprows=2)
 heights = prof[:, 0]
+u = prof[:, 2]
 
 ##########################################################################
 #Build lscale.inp files
@@ -20,8 +21,8 @@ heights = prof[:, 0]
 def format_num(n):
     return '{:.6s}'.format('{:0.3f}'.format(n))
 
-def add_line(height):
-    return "          " + format_num(height) + "      " + format_num(8) + "      " + format_num(0) + "      " + format_num(0) + "         " + format_num(0) + "              " + format_num(0)+ "      " + format_num(0)+ "      " + format_num(0)  +"\n"
+def add_line(height, u):
+    return "          " + format_num(height) + "      " + format_num(-1) + "      " + format_num(-7) + "      " + format_num(0) + "         " + format_num(0) + "              " + format_num(0)+ "      " + format_num(0)+ "      " + format_num(0)  +"\n"
 
 def build_inp():
     profile = open("../inputfiles/lscale.inp.txt", "w")
@@ -29,7 +30,7 @@ def build_inp():
          height(m)   ugeo(m/s) vgeo(m/s)  wfls(m/s)    not_used   not_used   dqtdtls(kg/kg/s)    dthldt(K/s)\n")
     #profile.write(format_num(temperature[-1]) +  "      13 \n")
     for i in range(0, len(heights)):
-        profile.write(add_line(heights[i]))
+        profile.write(add_line(heights[i], u[i]))
     profile.close()
     return profile
 
