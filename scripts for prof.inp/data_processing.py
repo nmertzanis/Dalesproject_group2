@@ -93,10 +93,10 @@ ws = ws[ind,0:x]
 "CREATING HEIGHTS AND INTERPOLATING the variables"
 
 #Using heights from example (radtransf, ASTEX)
-prof_ex = np.genfromtxt('prof_ex_radtransf.txt')
+# prof_ex = np.genfromtxt('prof_ex_radtransf.txt')
 # z = prof_ex[:,0]
 z = np.linspace(50, 9950, 199)
-print(z)
+
 
 #interpolation
 # Interpolation function with plotted example. linspacetointerp is essentially the new x-space.
@@ -209,16 +209,16 @@ tke = 1/2 * (Up**2 + Vp**2)
 plt.figure()
 plt.plot(P[0,:],z, label="day_min")
 plt.plot(P[1,:],z, label="day_max")
-plt.plot(P_o[0,0:5],height[0,0:5], 'o', label="day_min original")
-plt.plot(P_o[1,0:5],height[1,0:5], 'o', label="day_max original")
+plt.plot(P_o[0,0:9],height[0,0:9], 'o', label="day_min original")
+plt.plot(P_o[1,0:9],height[1,0:9], 'o', label="day_max original")
 plt.legend()
 plt.title("Pressure")
 
 plt.figure()
 plt.plot(temp[0,:],z, label="day_min")
 plt.plot(temp[1,:],z, label="day_max")
-plt.plot(temp_o[0,0:5],height[0,0:5], 'o', label="day_min original")
-plt.plot(temp_o[1,0:5],height[1,0:5], 'o', label="day_max original")
+plt.plot(temp_o[0,0:9],height[0,0:9], 'o', label="day_min original")
+plt.plot(temp_o[1,0:9],height[1,0:9], 'o', label="day_max original")
 plt.legend()
 plt.title("Temperature")
 
