@@ -95,7 +95,7 @@ ws = ws[ind,0:x]
 #Using heights from example (radtransf, ASTEX)
 # prof_ex = np.genfromtxt('prof_ex_radtransf.txt')
 # z = prof_ex[:,0]
-z = np.linspace(12.5, 5000-12.5, 200)
+z = np.linspace(50, 19950, 200)
 
 
 #interpolation
@@ -331,17 +331,31 @@ for i in range(0,len(z),1):
     profile.write(add_line(z[i], thl[1,i], q[1,i], U[1,i], V[1,i], tke[1,i]))
 profile.close()
 
-# brprofile = open("backradmax.inp.txt", "w")
-#
-#
-# currnum = 1
-#
-# pressure, temperature, humidity, ozone, water = get_backrad_input(P[currnum][0:15], temp[currnum][0:15], q[currnum][0:15])
-#
-# brprofile.write(format_num(temperature[-1]) +  "      15 \n")
-#
-#
-# for i in range(0, 15):
-#     brprofile.write(add_brline(pressure[i], temperature[i], humidity[i], ozone[i], water[i]))
-#
-# brprofile.close()
+brprofile = open("backradmax.inp.txt", "w")
+
+
+currnum = 1
+
+temp = np.array(profiles['tpMan'])
+P = np.array(profiles['prMan']) #hPa
+DPD = np.array(profiles['tdMan'])
+temp = temp[ind,0:15]
+P = P[ind,0:15]
+DPD = DPD[ind, 0:15]
+
+T0 = 273.15
+Td = temp - DPD
+e = e0 *np.exp(Lv/Rv*(1/T0-1/Td))
+es = e0 *np.exp(Lv/Rv*(1/T0-1/temp)) #kPa
+RH = e/es
+q = (R/Rv * es*10/P)/1000 #[kg/kg]
+
+pressure, temperature, humidity, ozone, water = get_backrad_input(P[currnum][0:15], temp[currnum][0:15], q[currnum][0:15])
+
+brprofile.write(format_num(temperature[-1]) +  "      15 \n")
+
+
+for i in range(0, 15):
+    brprofile.write(add_brline(pressure[i], temperature[i], humidity[i], ozone[i], water[i]))
+
+brprofile.close()

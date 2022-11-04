@@ -1,7 +1,7 @@
 &RUN
 iexpnr     =  001
-runtime    =  43200
-dtmax      =  10.
+runtime    =  1000
+dtmax      =  1.
 ladaptive  = .true.
 irandom    =  43
 randthl    =  0.0001
@@ -9,14 +9,14 @@ randqt     =  2.5e-10
 nsv        =  0
 /
 &DOMAIN
-itot       =  64
-jtot       =  64
-kmax       =  200
-xsize      =  6400.
-ysize      =  6400.
-xlat       =  52.
+itot       =  2
+jtot       =  2
+kmax       =  100
+xsize      =  1600.
+ysize      =  1600.
+xlat       =  34.
 xlon       =  -25.
-xday       =  94
+xday       =  164
 xtime      =  12.
 /
 &PHYSICS
@@ -25,11 +25,12 @@ ps         =  102700.
 thls       = 270.5
 lmoist     =  .true.
 irad       =  3
-timerad    =  60.
+timerad    =  1.
 lcoriol    =  .true.
 ltimedep   =  .false.
 useMcICA   = .false.
 /
+
 &NAMSURFACE
 isurf      = 2
 z0mav      = 2e-4
@@ -45,7 +46,7 @@ l_rain          =  .true.
 l_sedc          =  .true.
 l_mur_cst       =  .false.
 mur_cst         =  0
-Nc_0            = 200e6
+Nc_0            = 100e6
 sig_g           = 1.2
 /
 &NAMBULKMICROSTAT
@@ -77,16 +78,16 @@ ce2         = 0.51
 
 /
 &NAMCHECKSIM
-!tcheck      = 5
+tcheck      = 5
 /
 &NAMTIMESTAT
 ltimestat   = .true.
-dtav        = 60
+dtav        = 900
 /
 &NAMGENSTAT
 lstat       = .true.
-dtav        = 60
-timeav      = 60
+dtav        = 1
+timeav      = 1
 /
 &NAMBUDGET
 lbudget     = .false.
@@ -94,15 +95,15 @@ dtav        = 60.
 timeav      = 600.
 /
 &NAMRADSTAT
-dtav        = 60
-timeav      = 60.
+dtav        = 1
+timeav      = 1.
 lstat       = .true.
 /
 &NAMNETCDFSTATS
 lnetcdf = .true.
 /
 &NAMFIELDDUMP
- DTAV        =  300
+ DTAV        =   60
  LFIELDDUMP  = .false.
  LDIRACC     = .false.
  LBINARY     = .false.
