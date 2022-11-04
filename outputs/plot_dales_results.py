@@ -54,7 +54,7 @@ ql = np.array(profiles['ql'])[-1]
 thv =  np.array(profiles['thv'])[-1]
 pres = np.array(profiles['presh'])[-1]
 thl = np.array(profiles['thl'])[-1]
-z = np.array(profiles['zm'])[-1]
+z = np.array(profiles['zm'])
 swu = np.array(profiles['swu'])[-1]
 swd = np.array(profiles['swd'])[-1]
 lwu = np.array(profiles['lwu'])[-1]
@@ -80,7 +80,7 @@ ql1 = np.array(profiles['ql'])[-1]
 thv1 =  np.array(profiles['thv'])[-1]
 pres1 = np.array(profiles['presh'])[-1]
 thl1 = np.array(profiles['thl'])[-1]
-z1 = np.array(profiles['zm'])[-1]
+z1 = np.array(profiles['zm'])
 swu1 = np.array(profiles1['swu'])[-1]
 swd1 = np.array(profiles1['swd'])[-1]
 lwu1 = np.array(profiles1['lwu'])[-1]
@@ -99,16 +99,16 @@ obs_max = np.genfromtxt('obs/obs_max.txt')
 
 
 "VARIABLES: DAY MIN"
-thl_obs = obs_min[:,1]
-q_obs = obs_min[:,2]
-P_obs = obs_min[:,-1]
+thl_obs = obs_min[1:,1]
+q_obs = obs_min[1:,2]
+P_obs = obs_min[1:,-1]
 #We can't have T since we don't have ql measurements
 
 
 "VARIABLES: DAY MAX"
-thl1_obs = obs_max[:,1]
-q1_obs = obs_max[:,2]
-P1_obs = obs_max[:,-1]
+thl1_obs = obs_max[1:,1]
+q1_obs = obs_max[1:,2]
+P1_obs = obs_max[1:,-1]
 #We can't have T since we don't have ql measurements
 
 
@@ -146,7 +146,7 @@ plt.legend()
 
 plt.figure()
 plt.plot(thl_obs, z, label = 'Observed profile' )
-plt.plot(thl, z,  '-.-' , label = 'Modeled profile')
+plt.plot(thl, z,  '--' , label = 'Modeled profile')
 plt.title("Day_min")
 plt.xlabel("Thl [K]")
 plt.ylabel("Height [m]")
@@ -154,7 +154,7 @@ plt.legend()
 
 plt.figure()
 plt.plot(thl1_obs, z, label = 'Observed profile' )
-plt.plot(thl1, z,  '-.-' , label = 'Modeled profile')
+plt.plot(thl1, z,  '--' , label = 'Modeled profile')
 plt.title("Day_max")
 plt.xlabel("Thl [K]")
 plt.ylabel("Height [m]")
@@ -163,7 +163,7 @@ plt.legend()
 
 plt.figure()
 plt.plot(q_obs, z, label = 'Observed profile' )
-plt.plot(qt, z,  '-.-' , label = 'Modeled profile')
+plt.plot(qt, z,  '--' , label = 'Modeled profile')
 plt.title("Day_min")
 plt.xlabel("qt [kg/kg]")
 plt.ylabel("Height [m]")
@@ -171,7 +171,7 @@ plt.legend()
 
 plt.figure()
 plt.plot(q1_obs, z, label = 'Observed profile' )
-plt.plot(qt1, z,  '-.-' , label = 'Modeled profile')
+plt.plot(qt1, z,  '--' , label = 'Modeled profile')
 plt.title("Day_max")
 plt.xlabel("qt [kg/kg]")
 plt.ylabel("Height [m]")

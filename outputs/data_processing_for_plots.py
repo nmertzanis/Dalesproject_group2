@@ -95,7 +95,7 @@ ws = ws[ind,0:x]
 #Using heights from example (radtransf, ASTEX)
 # prof_ex = np.genfromtxt('prof_ex_radtransf.txt')
 # z = prof_ex[:,0]
-z = np.linspace(50, 9950, 199)
+z = np.linspace(0, 9900, 100)
 
 
 #interpolation
