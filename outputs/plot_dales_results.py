@@ -93,7 +93,7 @@ T1 = thv1/(1+0.608*(qt1-ql1)) * ((pres1)/p0)**(287/cp)
 #######################################################################################################################################################
 
 "OBSERVATIONS"
-#Files to open are in outputs/obs
+#Files to open are in outputs/obs: they are already correct for 7/1/09 at 00 and 4/4/09 at 00 (12h after the start of the simulation)
 obs_min = np.genfromtxt('obs/obs_min.txt')
 obs_max = np.genfromtxt('obs/obs_max.txt')
 
