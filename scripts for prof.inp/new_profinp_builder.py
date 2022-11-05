@@ -8,10 +8,10 @@ Created on Fri Nov  4 15:05:44 2022
 "TODO:"
 # Import cabauw data and calculate
     # height from 12,5 to 5000, steps of 25
-    # Calculate: thl, qt, u, v, tke and interpolate them 
+    # Calculate: thl, qt, u, v, tke and interpolate them
 # Retrieve data from radiosondes for the same variables (interpolated)
-# Plot to see the difference and match them 
-# Print them in the file 
+# Plot to see the difference and match them
+# Print them in the file
 # GIve the file to motherfuckter NIckolaos
 #
 
@@ -104,8 +104,8 @@ q_c1 = q_c1[ind_c1,:]
 
 temp_c4 = temp_c4[ind_c4,:]
 wd_c4 = wd_c4[ind_c4,:]
-ws_c4 = ws_c4[ind_c4,:] 
-q_c4 = q_c4[ind_c4,:] 
+ws_c4 = ws_c4[ind_c4,:]
+q_c4 = q_c4[ind_c4,:]
 
 #Fixing wind speed outliers
 for i in range(len(ws_c1)):
@@ -113,7 +113,7 @@ for i in range(len(ws_c1)):
         if abs(ws_c1[i,j]) > 100:
             ws_c1[i,j]=ws_c1[i,j-1]
         if abs(ws_c4[i,j]) > 100:
-            ws_c4[i,j]=ws_c4[i,j-1]        
+            ws_c4[i,j]=ws_c4[i,j-1]
 
 
 "INTERPOLATION"
@@ -157,17 +157,17 @@ for i in range(len(ind)):
     wd_interp[i] = interpolate(height[i], wd[i], z, linear=False)
     ws_interp[i] = interpolate(height[i], ws[i], z, linear=False)
 
-for i in range(len(ind_c1)):    
+for i in range(len(ind_c1)):
     tempc1_interp[i] = interpolate(height_c1, temp_c1[i], z[0:9], linear=False)
     wdc1_interp[i] = interpolate(height_c1, wd_c1[i], z[0:9], linear=False)
     wsc1_interp[i] = interpolate(height_c1, ws_c1[i], z[0:9], linear=False)
     qc1_interp[i] = interpolate(height_c1, q_c1[i], z[0:9], linear=False)
-    
+
     tempc4_interp[i] = interpolate(height_c4, temp_c4[i], z[0:9], linear=False)
     wdc4_interp[i] = interpolate(height_c4, wd_c4[i], z[0:9], linear=False)
     wsc4_interp[i] = interpolate(height_c4, ws_c4[i], z[0:9], linear=False)
     qc4_interp[i] = interpolate(height_c1, q_c4[i], z[0:9], linear=False)
-    
+
 
 #Save original data (to plot later) and change names of interpolated ones (to use for calculations)
 temp_o = temp
@@ -205,7 +205,7 @@ q_c4 = qc4_interp
 
 "CALCULATIONS"
 
-#For radiosondes: 
+#For radiosondes:
 #translate dew point depression to specific and relative humidity
 T0 = 273.15
 Td = temp - DPD
@@ -397,6 +397,34 @@ plt.title("Wind speed (V)")
 
 "CREATING INPUT FILES"
 
+def format_brnum(n):
+    return '{:.10s}'.format('{:0.10f}'.format(n))
+
+def get_backrad_input(pressure, temperature, humidity):
+    # height = np.array(radiosonde['htMan'][daytime][0:12])
+    # pressure = np.array(radiosonde['prMan'][daytime][0:15])
+    # temperature = np.array(radiosonde['tpMan'][daytime][0:15])
+    # print(pressure)
+    # humidity = get_humidity(daytime)
+
+    # height = np.flip(height)
+    pressure = np.flip(pressure) * 100
+    temperature = np.flip(temperature)
+    humidity = np.flip(humidity)
+    ozone = np.array([1.23 * (10 ** (-6)), 0.51 * (10 ** (-6)), 2.07 * (10 ** (-7)), 1.52 * (10 ** (-7)), \
+    1.52 * (10 ** (-7)), 1.52 * (10 ** (-7)), 1.52 * (10 ** (-7)), 1.52 * (10 ** (-7)), 1.52 * (10 ** (-7)), \
+    1.52 * (10 ** (-7)), 1.52 * (10 ** (-7)), 1.52 * (10 ** (-7)), 1.52 * (10 ** (-7)), 1.52 * (10 ** (-7)), 1.52 * (10 ** (-7))])
+    water = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+    return pressure, temperature, humidity, ozone, water
+    # humidity = np.flip(humidity)
+
+def add_brline(pressure, temperature, humidity, ozone, water):
+
+    return format_brnum(pressure) + "      " +  format_brnum(temperature) + "      " +  format_brnum(humidity)\
+    + "      " +  format_brnum(ozone) + "      " + str(water) + "\n"
+
+
 
 # Profile for day_min
 profile = open("prof.inp.001.txt", "w")
@@ -444,20 +472,34 @@ for i in range(0,len(z),1):
         profile.write(add_line(z[i], thl[1,i], q[1,i], U[1,i], V[1,i], tke[1,i]))
 
 
+brprofile = open("backradmin.inp.txt", "w")
+# print(temp_o)
+T0 = 273.15
+Td = temp_o - DPD_o
+e = e0 *np.exp(Lv/Rv*(1/T0-1/Td))
+es = e0 *np.exp(Lv/Rv*(1/T0-1/temp_o)) #kPa
+RH = e/es
+qs = (R/Rv * es*10/P_o)#[kg/kg]
+q_o = RH*qs
+
+pressure, temperature, humidity, ozone, water = get_backrad_input(P_o[0][0:15], temp_o[0][0:15], q_o[0][0:15])
+
+brprofile.write(format_num(temperature[-1]) +  "      15 \n")
 
 
+for i in range(0, 15):
+    brprofile.write(add_brline(pressure[i], temperature[i], humidity[i], ozone[i], water[i]))
+
+brprofile.close()
+
+brprofile = open("backradmax.inp.txt", "w")
+
+pressure, temperature, humidity, ozone, water = get_backrad_input(P_o[1][0:15], temp_o[1][0:15], q_o[1][0:15])
+
+brprofile.write(format_num(temperature[-1]) +  "      15 \n")
 
 
+for i in range(0, 15):
+    brprofile.write(add_brline(pressure[i], temperature[i], humidity[i], ozone[i], water[i]))
 
-
-
-
-
-
-
-
-
-
-
-
-
+brprofile.close()
