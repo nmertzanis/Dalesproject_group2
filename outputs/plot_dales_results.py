@@ -193,6 +193,7 @@ for i in range(0,12,1):
     ax[0].plot(T[60*i][0:9], z[0:9],  '--' , label = 'Modeled profile')
     ax[0].set_title("Temperature day_min")
     ax[0].set_xlabel("T [K]")
+    ax[0].set_xlim([np.min([np.min(T),np.min(T_obs)]),np.max([np.max(T),np.max(T_obs)])])
     ax[0].set_ylabel("Height [m]")
     ax[0].legend()
     
@@ -200,6 +201,7 @@ for i in range(0,12,1):
     ax[1].plot(T1[60*i][0:9], z[0:9],  '--' , label = 'Modeled profile')
     ax[1].set_title("Temperature day_max")
     ax[1].set_xlabel("T [K]")
+    ax[1].set_xlim([np.min([np.min(T1),np.min(T1_obsh)]),np.max([np.max(T1_obsh),np.max(T1)])])
     ax[1].set_ylabel("Height [m]")
     ax[1].legend()
     
@@ -211,6 +213,7 @@ for i in range(0,12,1):
     ax[0].plot(qt[60*i][0:9], z[0:9],  '--' , label = 'Modeled profile')
     ax[0].set_title("Specific humidity day_min")
     ax[0].set_xlabel("qt [kg/kg]")
+    ax[0].set_xlim([np.min([np.min(q_obsh),np.min(qt)]),np.max([np.max(q_obsh),np.max(qt)])])
     ax[0].set_ylabel("Height [m]")
     ax[0].legend()
     
@@ -218,6 +221,7 @@ for i in range(0,12,1):
     ax[1].plot(qt1[60*i][0:9], z[0:9],  '--' , label = 'Modeled profile')
     ax[1].set_title("Specific humidity day_max")
     ax[1].set_xlabel("qt [kg/kg]")
+    ax[1].set_xlim([np.min([np.min(q1_obsh),np.min(qt1)]),np.max([np.max(q1_obsh),np.max(qt1)])])
     ax[1].set_ylabel("Height [m]")
     ax[1].legend()
     
@@ -230,6 +234,7 @@ for i in range(0,12,1):
     ax[0].plot(swd[60*i], z,  '--' , label = 'Downwards')
     ax[0].set_title("Shortwave radiation day_min")
     ax[0].set_xlabel("Radiation flux [W/m^2]")
+    ax[0].set_xlim([np.min(swd),np.max(swu)])
     ax[0].set_ylabel("Height [m]")
     ax[0].legend()
     
@@ -237,6 +242,7 @@ for i in range(0,12,1):
     ax[1].plot(swd1[60*i], z,  '--' , label = 'Downwards')
     ax[1].set_title("Shortwave radiation day_max")
     ax[1].set_xlabel("Radiation flux [W/m^2]")
+    ax[1].set_xlim([np.min(swd1),np.max(swu1)])
     ax[1].set_ylabel("Height [m]")
     ax[1].legend()
     
@@ -248,6 +254,7 @@ for i in range(0,12,1):
     ax[0].plot(lwu[60*i], z,  '--' , label = 'Upwards')
     ax[0].plot(lwd[60*i], z,  '--' , label = 'Downwards')
     ax[0].set_title("Longwave radiation day_min")
+    ax[0].set_xlim([np.min(lwd),np.max(lwu)])
     ax[0].set_xlabel("Radiation flux [W/m^2]")
     ax[0].set_ylabel("Height [m]")
     ax[0].legend()
@@ -256,6 +263,7 @@ for i in range(0,12,1):
     ax[1].plot(lwd1[60*i], z,  '--' , label = 'Downwards')
     ax[1].set_title("Longwave radiation day_max")
     ax[1].set_xlabel("Radiation flux [W/m^2]")
+    ax[1].set_xlim([np.min(lwd1),np.max(lwu1)])
     ax[1].set_ylabel("Height [m]")
     ax[1].legend()
     
