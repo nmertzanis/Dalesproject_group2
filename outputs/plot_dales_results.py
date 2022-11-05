@@ -17,6 +17,7 @@ import matplotlib.pyplot as plt
 import netCDF4 as nc
 import os
 import seaborn as sns
+import datetime
 
 sns.set()
 
@@ -129,26 +130,6 @@ P1_obs = obs_max[1:,-1]
 
 
 "FINAL TIME STEP"
-#Radiation profiles:
-
-plt.figure(figsize=(7,6))
-plt.plot(swu[-1],z, label = "day min")
-plt.plot(swu1[-1],z, label = "day max")
-plt.plot(swd[-1],z, label = "day min")
-plt.plot(swd1[-1],z, label = "day max")
-plt.xlabel("Shortwave radiation flux [W/m^2]")
-plt.ylabel("Height [m]")
-plt.legend()
-
-plt.figure(figsize=(7,6))
-plt.plot(lwu[-1],z, label = "day min")
-plt.plot(lwu1[-1],z, label = "day max")
-plt.plot(lwd[-1],z, label = "day min")
-plt.plot(lwd1[-1],z, label = "day max")
-plt.xlabel("Longwave radiation flux [W/m^2]")
-plt.ylabel("Height [m]")
-plt.legend()
-
 
 #Observation and modeled profiles 
 
@@ -189,52 +170,103 @@ plt.legend()
 "EVERY HOUR"
 
 #fix times in the for cycle to have a plot per hour 
-#fix heights to 200 only
+
 
 cabauw_hourly = nc.Dataset('cabauw_hourly.nc')
 
-T_obsh = np.array(cabauw_hourly['temp_jan'])
-T1_obsh = np.array(cabauw_hourly['temp_apr'])
+T_obsh = np.array(cabauw_hourly['temp_jan'])[:,0:9] #only up to 200m
+T1_obsh = np.array(cabauw_hourly['temp_apr'])[:,0:9]
 
-q_obsh = np.array(cabauw_hourly['q_jan'])
-q1_obsh = np.array(cabauw_hourly['q_apr'])  
+q_obsh = np.array(cabauw_hourly['q_jan'])[:,0:9]
+q1_obsh = np.array(cabauw_hourly['q_apr'])[:,0:9]
 
 cabauw_hourly.close()
 
+hours = np.arange(12,25,1)
+
 #Observation and modeled profiles 
-for i in range(len(T_obsh)):
+for i in range(0,12,1):
     
-    fig, ax = plt.subplots(2,2, figsize = (10,10))
+    fig, ax = plt.subplots(1,2, figsize = (10,10))
     
-    ax[0,0].plot(T_obsh[i], z[0:9], label = 'Observed profile' )
-    ax[0,0].plot(T[i], z,  '--' , label = 'Modeled profile')
-    ax[0,0].set_title("Temperature day_min")
-    ax[0,0].set_xlabel("T [K]")
-    ax[0,0].set_ylabel("Height [m]")
-    ax[0,0].legend()
+    ax[0].plot(T_obsh[i*6], z[0:9], label = 'Observed profile' )
+    ax[0].plot(T[60*i][0:9], z[0:9],  '--' , label = 'Modeled profile')
+    ax[0].set_title("Temperature day_min")
+    ax[0].set_xlabel("T [K]")
+    ax[0].set_ylabel("Height [m]")
+    ax[0].legend()
     
-    ax[0,1].plot(T1_obsh[i], z[0:9], label = 'Observed profile' )
-    ax[0,1].plot(T1[i], z,  '--' , label = 'Modeled profile')
-    ax[0,1].set_title("Temperature day_max")
-    ax[0,1].set_xlabel("T [K]")
-    ax[0,1].set_ylabel("Height [m]")
-    ax[0,1].legend()
+    ax[1].plot(T1_obsh[i*6], z[0:9], label = 'Observed profile' )
+    ax[1].plot(T1[60*i][0:9], z[0:9],  '--' , label = 'Modeled profile')
+    ax[1].set_title("Temperature day_max")
+    ax[1].set_xlabel("T [K]")
+    ax[1].set_ylabel("Height [m]")
+    ax[1].legend()
     
-    ax[1,0].plot(q_obsh[i], z[0:9], label = 'Observed profile' )
-    ax[1,0].plot(qt[i], z,  '--' , label = 'Modeled profile')
-    ax[1,0].set_title("Specific humidity day_min")
-    ax[1,0].set_xlabel("qt [kg/kg]")
-    ax[1,0].set_ylabel("Height [m]")
-    ax[1,0].legend()
+    plt.suptitle(f"Profiles at time {hours[i]}h")
     
-    ax[1,1].plot(q1_obsh[i], z[0:9], label = 'Observed profile' )
-    ax[1,1].plot(qt1[i], z,  '--' , label = 'Modeled profile')
-    ax[1,1].set_title("Specific humidity day_min")
-    ax[1,1].set_xlabel("qt [kg/kg]")
-    ax[1,1].set_ylabel("Height [m]")
-    ax[1,1].legend()
+    fig, ax = plt.subplots(1,2, figsize = (10,10))
     
-    plt.suptitle(f"Profiles at time {i}")
+    ax[0].plot(q_obsh[i*6][0:9], z[0:9], label = 'Observed profile' )
+    ax[0].plot(qt[60*i][0:9], z[0:9],  '--' , label = 'Modeled profile')
+    ax[0].set_title("Specific humidity day_min")
+    ax[0].set_xlabel("qt [kg/kg]")
+    ax[0].set_ylabel("Height [m]")
+    ax[0].legend()
+    
+    ax[1].plot(q1_obsh[i*6], z[0:9], label = 'Observed profile' )
+    ax[1].plot(qt1[60*i][0:9], z[0:9],  '--' , label = 'Modeled profile')
+    ax[1].set_title("Specific humidity day_min")
+    ax[1].set_xlabel("qt [kg/kg]")
+    ax[1].set_ylabel("Height [m]")
+    ax[1].legend()
+    
+    plt.suptitle(f"Profiles at time {hours[i]}h")
+    
+    
+    fig, ax = plt.subplots(1,2, figsize = (10,10))
+    
+    ax[0].plot(swu[60*i], z,  '--' , label = 'Upwards')
+    ax[0].plot(swd[60*i], z,  '--' , label = 'Downwards')
+    ax[0].set_title("Shortwave radiation day_min")
+    ax[0].set_xlabel("Radiation flux [W/m^2]")
+    ax[0].set_ylabel("Height [m]")
+    ax[0].legend()
+    
+    ax[1].plot(swu1[60*i], z,  '--' , label = 'Upwards')
+    ax[1].plot(swd1[60*i], z,  '--' , label = 'Downwards')
+    ax[1].set_title("Shortwave radiation day_max")
+    ax[1].set_xlabel("Radiation flux [W/m^2]")
+    ax[1].set_ylabel("Height [m]")
+    ax[1].legend()
+    
+    plt.suptitle(f"Profiles at time {hours[i]}h")
+    
+    
+    fig, ax = plt.subplots(1,2, figsize = (10,10))
+    
+    ax[0].plot(lwu[60*i], z,  '--' , label = 'Upwards')
+    ax[0].plot(lwd[60*i], z,  '--' , label = 'Downwards')
+    ax[0].set_title("Longwave radiation day_min")
+    ax[0].set_xlabel("Radiation flux [W/m^2]")
+    ax[0].set_ylabel("Height [m]")
+    ax[0].legend()
+    
+    ax[1].plot(lwu1[60*i], z,  '--' , label = 'Upwards')
+    ax[1].plot(lwd1[60*i], z,  '--' , label = 'Downwards')
+    ax[1].set_title("Longwave radiation day_max")
+    ax[1].set_xlabel("Radiation flux [W/m^2]")
+    ax[1].set_ylabel("Height [m]")
+    ax[1].legend()
+    
+    plt.suptitle(f"Profiles at time {hours[i]}h")
+    
+    
+    
+    
+
+
+
 
 
 
