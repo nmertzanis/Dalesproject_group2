@@ -261,7 +261,7 @@ for i in range(0,72,1):
     ax[0].plot(abs(swd[dt*i]), z,  '--' , label = 'Downwards')
     ax[0].set_title("Shortwave radiation day_min")
     ax[0].set_xlabel("Radiation flux [W/m^2]")
-    ax[0].set_xlim([np.min(swd),np.max(swu)])
+    ax[0].set_xlim([0,np.max(swu)])
     ax[0].set_ylabel("Height [m]")
     ax[0].legend()
     
@@ -269,7 +269,7 @@ for i in range(0,72,1):
     ax[1].plot(abs(swd1[dt*i]), z,  '--' , label = 'Downwards')
     ax[1].set_title("Shortwave radiation day_max")
     ax[1].set_xlabel("Radiation flux [W/m^2]")
-    ax[1].set_xlim([np.min(swd1),np.max(swu1)])
+    ax[1].set_xlim([0,np.max(swu1)])
     ax[1].set_ylabel("Height [m]")
     ax[1].legend()
     
@@ -282,7 +282,7 @@ for i in range(0,72,1):
     ax[0].plot(lwu[dt*i], z,  '--' , label = 'Upwards')
     ax[0].plot(abs(lwd[dt*i]), z,  '--' , label = 'Downwards')
     ax[0].set_title("Longwave radiation day_min")
-    ax[0].set_xlim([np.min(lwd),np.max(lwu)])
+    ax[0].set_xlim([0,np.max(lwu)])
     ax[0].set_xlabel("Radiation flux [W/m^2]")
     ax[0].set_ylabel("Height [m]")
     ax[0].legend()
@@ -291,7 +291,7 @@ for i in range(0,72,1):
     ax[1].plot(abs(lwd1[dt*i]), z,  '--' , label = 'Downwards')
     ax[1].set_title("Longwave radiation day_max")
     ax[1].set_xlabel("Radiation flux [W/m^2]")
-    ax[1].set_xlim([np.min(lwd1),np.max(lwu1)])
+    ax[1].set_xlim([0,np.max(lwu1)])
     ax[1].set_ylabel("Height [m]")
     ax[1].legend()
     
