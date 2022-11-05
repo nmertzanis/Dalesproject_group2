@@ -20,6 +20,7 @@ import matplotlib.pyplot as plt
 import netCDF4 as nc
 import datetime
 from scipy.interpolate import interp1d
+from netCDF4 import Dataset
 
 R = 287 #[J/(kg*K)] dry air
 Rv = 461 #[J/(kg*K)] vapour
@@ -401,7 +402,7 @@ plt.title("Wind speed (V)")
 # Profile for day_min
 profile = open("obs_min.txt", "w")
 profile.write("#ASTEX case using prescribed vertical grid, Nlev = 427 1 date" + day_min +'\n' \
-      "height(m)   thl(K)     qt(kg/kg)       u(m/s)     v(m/s)     tke(m2/s2)     pres\n")
+      "height(m)   T(K)     qt(kg/kg)       u(m/s)     v(m/s)     tke(m2/s2)     pres\n")
 
 
 def format_num(n):
@@ -410,10 +411,10 @@ def format_num(n):
 def format_q(q):
     return "{:.3E}".format(q)
 
-def add_line(z, thl, qt, u, v, tke, P):
+def add_line(z, temp, qt, u, v, tke, P):
 
     return "      " + format_num(z) + "      " \
-    + format_num(thl) + "      " + format_q(qt) + "      " \
+    + format_num(temp) + "      " + format_q(qt) + "      " \
     + format_num(u) + "      " + format_num(v) + "      " \
     + format_num(tke) + "      " + format_num(P) + "\n"
 
@@ -424,33 +425,53 @@ profile = open("obs_min.txt", "a")
 #save to file
 for i in range(0,len(z),1):
     if i < 8:
-        profile.write(add_line(z[i], thl_c1[0,i], q_c1[0,i], U_c1[0,i], V_c1[0,i], tke[0,i], P[0,i]))
+        profile.write(add_line(z[i], temp_c1[0,i], q_c1[0,i], U_c1[0,i], V_c1[0,i], tke[0,i], P[0,i]))
     else:
-        profile.write(add_line(z[i], thl[0,i], q[0,i], U[0,i], V[0,i], tke[0,i], P[0,i]))
+        profile.write(add_line(z[i], temp[0,i], q[0,i], U[0,i], V[0,i], tke[0,i], P[0,i]))
 
 
 
 # Profile for day_max
-profile = open("prof.inp.002.txt", "w")
-profile.write("date=" + day_max + '\n' \
-      "height(m)   thl(K)     qt(kg/kg)       u(m/s)     v(m/s)     tke(m2/s2)\n")
+profile = open("obs_max.txt", "w")
+profile.write("#ASTEX case using prescribed vertical grid, Nlev = 427 1 date" + day_min +'\n'  \
+      "height(m)   T(K)     qt(kg/kg)       u(m/s)     v(m/s)     tke(m2/s2)     pres\n")
 
 profile = open("obs_max.txt", "a")
 
 #save to file
 for i in range(0,len(z),1):
     if i < 8:
-        profile.write(add_line(z[i], thl_c4[0,i], q_c4[0,i], U_c4[0,i], V_c4[0,i], tke[0,i], P[0,i]))
+        profile.write(add_line(z[i], temp_c4[0,i], q_c4[0,i], U_c4[0,i], V_c4[0,i], tke[0,i], P[0,i]))
     else:
-        profile.write(add_line(z[i], thl[1,i], q[1,i], U[1,i], V[1,i], tke[1,i], P[1,i]))
+        profile.write(add_line(z[i], temp[1,i], q[1,i], U[1,i], V[1,i], tke[1,i], P[1,i]))
+
+profile.close()
 
 
+"SAVING CABAUW DATA EVERY HOUR"
 
 
+#Creating file
+ncfile = Dataset('cabauw_hourly.nc', mode='w', format='NETCDF4_CLASSIC')
 
+#Creating dimensions
+time_dim = ncfile.createDimension('time', 73)
+height_dim = ncfile.createDimension('height', 9)
 
+#Creating variables
+#Variables: T_c1, T_c4, q_c1, q_c4
 
+temp_jan = ncfile.createVariable('temp_jan', np.float64,('time', 'height'))
+temp_apr = ncfile.createVariable('temp_apr', np.float64,('time', 'height'))
+q_jan = ncfile.createVariable('q_jan', np.float64,('time', 'height'))
+q_apr = ncfile.createVariable('q_apr', np.float64,('time', 'height'))
 
+temp_jan[:] = temp_c1
+temp_apr[:] = temp_c4
+q_jan[:] = q_c1
+q_apr[:] = q_c4
+
+ncfile.close()
 
 
 

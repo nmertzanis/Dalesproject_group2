@@ -66,6 +66,8 @@ swd = np.array(profiles['swd'])
 lwu = np.array(profiles['lwu'])
 lwd = np.array(profiles['lwd'])
 
+time = np.array(profiles['time'])
+
 T = thv/(1+0.608*(qt-ql)) * ((pres)/p0)**(287/cp)
 
 
@@ -81,16 +83,17 @@ profiles1 = nc.Dataset(f' {folder_path}\{list_of_files[0]}')
 timeseries1 = nc.Dataset(f' {folder_path}\{list_of_files[1]}')
 
 "RETRIEVE VARIABLES"
-qt1 = np.array(profiles['qt'])
-ql1 = np.array(profiles['ql'])
-thv1 =  np.array(profiles['thv'])
-pres1 = np.array(profiles['presh'])
-thl1 = np.array(profiles['thl'])
-z1 = np.array(profiles['zm'])
+qt1 = np.array(profiles1['qt'])
+ql1 = np.array(profiles1['ql'])
+thv1 =  np.array(profiles1['thv'])
+pres1 = np.array(profiles1['presh'])
+thl1 = np.array(profiles1['thl'])
+z1 = np.array(profiles1['zm'])
 swu1 = np.array(profiles1['swu'])
 swd1 = np.array(profiles1['swd'])
 lwu1 = np.array(profiles1['lwu'])
 lwd1 = np.array(profiles1['lwd'])
+
 
 T1 = thv1/(1+0.608*(qt1-ql1)) * ((pres1)/p0)**(287/cp)
 
@@ -106,17 +109,17 @@ obs_max = np.genfromtxt('obs/obs_max.txt')
 
 
 "VARIABLES: DAY MIN"
-thl_obs = obs_min[1:,1]
+T_obs = obs_min[1:,1]
 q_obs = obs_min[1:,2]
 P_obs = obs_min[1:,-1]
-#We can't have T since we don't have ql measurements
+#We can't calculate thl since we don't have ql measurements
 
 
 "VARIABLES: DAY MAX"
-thl1_obs = obs_max[1:,1]
+T1_obs = obs_max[1:,1]
 q1_obs = obs_max[1:,2]
 P1_obs = obs_max[1:,-1]
-#We can't have T since we don't have ql measurements
+#We can't calculate thl since we don't have ql measurements
 
 
 
@@ -150,18 +153,18 @@ plt.legend()
 #Observation and modeled profiles 
 
 plt.figure()
-plt.plot(thl_obs, z, label = 'Observed profile' )
-plt.plot(thl[-1], z,  '--' , label = 'Modeled profile')
+plt.plot(T_obs, z, label = 'Observed profile' )
+plt.plot(T[-1], z,  '--' , label = 'Modeled profile')
 plt.title("Day_min")
-plt.xlabel("Thl [K]")
+plt.xlabel("T [K]")
 plt.ylabel("Height [m]")
 plt.legend()
 
 plt.figure()
-plt.plot(thl1_obs, z, label = 'Observed profile' )
-plt.plot(thl1[-1], z,  '--' , label = 'Modeled profile')
+plt.plot(T1_obs, z, label = 'Observed profile' )
+plt.plot(T1[-1], z,  '--' , label = 'Modeled profile')
 plt.title("Day_max")
-plt.xlabel("Thl [K]")
+plt.xlabel("T [K]")
 plt.ylabel("Height [m]")
 plt.legend()
 
@@ -185,25 +188,53 @@ plt.legend()
 
 "EVERY HOUR"
 
+#fix times in the for cycle to have a plot per hour 
+#fix heights to 200 only
 
-#retrieve profiles for every hour: repeat interpolation procedure with cabauw data or save to file from the other script and re import it
-# or: run the other script first and then paste everything in the console (fast way)
+cabauw_hourly = nc.Dataset('cabauw_hourly.nc')
 
-#Variables: thl_c1, thl_c4, q_c1, q_c4
+T_obsh = np.array(cabauw_hourly['temp_jan'])
+T1_obsh = np.array(cabauw_hourly['temp_apr'])
 
+q_obsh = np.array(cabauw_hourly['q_jan'])
+q1_obsh = np.array(cabauw_hourly['q_apr'])  
 
-#for cycle from h12 t h00 every hour plots of:
-    #theta modeled vs observed day min
-    #theta modeled vs observed day max
-    #qt modeled vs observed day min
-    #qt modeled vs observed day max
+cabauw_hourly.close()
 
-
-
-
-
-
-
+#Observation and modeled profiles 
+for i in range(len(T_obsh)):
+    
+    fig, ax = plt.subplots(2,2, figsize = (10,10))
+    
+    ax[0,0].plot(T_obsh[i], z[0:9], label = 'Observed profile' )
+    ax[0,0].plot(T[i], z,  '--' , label = 'Modeled profile')
+    ax[0,0].set_title("Temperature day_min")
+    ax[0,0].set_xlabel("T [K]")
+    ax[0,0].set_ylabel("Height [m]")
+    ax[0,0].legend()
+    
+    ax[0,1].plot(T1_obsh[i], z[0:9], label = 'Observed profile' )
+    ax[0,1].plot(T1[i], z,  '--' , label = 'Modeled profile')
+    ax[0,1].set_title("Temperature day_max")
+    ax[0,1].set_xlabel("T [K]")
+    ax[0,1].set_ylabel("Height [m]")
+    ax[0,1].legend()
+    
+    ax[1,0].plot(q_obsh[i], z[0:9], label = 'Observed profile' )
+    ax[1,0].plot(qt[i], z,  '--' , label = 'Modeled profile')
+    ax[1,0].set_title("Specific humidity day_min")
+    ax[1,0].set_xlabel("qt [kg/kg]")
+    ax[1,0].set_ylabel("Height [m]")
+    ax[1,0].legend()
+    
+    ax[1,1].plot(q1_obsh[i], z[0:9], label = 'Observed profile' )
+    ax[1,1].plot(qt1[i], z,  '--' , label = 'Modeled profile')
+    ax[1,1].set_title("Specific humidity day_min")
+    ax[1,1].set_xlabel("qt [kg/kg]")
+    ax[1,1].set_ylabel("Height [m]")
+    ax[1,1].legend()
+    
+    plt.suptitle(f"Profiles at time {i}")
 
 
 
