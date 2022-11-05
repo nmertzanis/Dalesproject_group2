@@ -216,7 +216,7 @@ for i in range(0,12,1):
     
     ax[1].plot(q1_obsh[i*6], z[0:9], label = 'Observed profile' )
     ax[1].plot(qt1[60*i][0:9], z[0:9],  '--' , label = 'Modeled profile')
-    ax[1].set_title("Specific humidity day_min")
+    ax[1].set_title("Specific humidity day_max")
     ax[1].set_xlabel("qt [kg/kg]")
     ax[1].set_ylabel("Height [m]")
     ax[1].legend()
