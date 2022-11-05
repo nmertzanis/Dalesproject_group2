@@ -21,8 +21,8 @@ xtime      =  12.
 /
 &PHYSICS
 z0         =  2e-4
-ps         =  102700.
-thls       = 270.5
+ps         =  101500.
+thls       = 293.4
 lmoist     =  .true.
 irad       =  3
 timerad    =  60.
@@ -34,8 +34,8 @@ useMcICA   = .false.
 isurf      = 2
 z0mav      = 2e-4
 z0hav      = 2e-4
-ps         = 102190.
-albedoav   = 0.07
+ps         = 101500.
+albedoav   = 0.25
 /
 
 &NAMMICROPHYSICS

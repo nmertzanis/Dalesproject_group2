@@ -34,8 +34,8 @@ useMcICA   = .false.
 isurf      = 2
 z0mav      = 2e-4
 z0hav      = 2e-4
-ps         = 102190.
-albedoav   = 0.07
+ps         = 102700.
+albedoav   = 0.25
 /
 
 &NAMMICROPHYSICS
@@ -86,7 +86,7 @@ dtav        = 60
 &NAMGENSTAT
 lstat       = .true.
 dtav        = 60
-timeav      = 60
+timeav      = 300
 /
 &NAMBUDGET
 lbudget     = .false.
@@ -95,7 +95,7 @@ timeav      = 600.
 /
 &NAMRADSTAT
 dtav        = 60
-timeav      = 60.
+timeav      = 300.
 lstat       = .true.
 /
 &NAMNETCDFSTATS
