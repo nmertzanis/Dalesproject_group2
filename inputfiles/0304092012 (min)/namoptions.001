@@ -102,10 +102,10 @@ lstat       = .true.
 lnetcdf = .true.
 /
 &NAMFIELDDUMP
- DTAV        =  300
- LFIELDDUMP  = .false.
- LDIRACC     = .false.
+ DTAV        =  60
+ LFIELDDUMP  = .true.
+ LDIRACC     = .true.
  LBINARY     = .false.
  KLOW        =   1
- KHIGH       =   400
+ KHIGH       =   200
 /
