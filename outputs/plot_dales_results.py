@@ -49,7 +49,7 @@ cd = np.array([50, 1000]) #Cloud droplet numbers
 
 "IMPORT FILES"
 
-folder_path = r'E:\TUDELFT\2year\DALES\Final_proj\Dalesproject_group2\outputs\day_min'  #enter your file path in this line
+folder_path = r'E:\TUDELFT\2year\DALES\Final_proj\Dalesproject_group2\outputs\oldonesmin'  #enter your file path in this line
 list_of_files = os.listdir(folder_path)
 list_of_files = sorted(list_of_files)
 profiles = nc.Dataset(f' {folder_path}\{list_of_files[0]}')
@@ -77,7 +77,7 @@ T = thv/(1+0.608*(qt-ql)) * ((pres)/p0)**(287/cp)
 
 "IMPORT FILES"
 
-folder_path = r'E:\TUDELFT\2year\DALES\Final_proj\Dalesproject_group2\outputs\day_max'  #enter your file path in this line
+folder_path = r'E:\TUDELFT\2year\DALES\Final_proj\Dalesproject_group2\outputs\oldonesmax'  #enter your file path in this line
 list_of_files = os.listdir(folder_path)
 list_of_files = sorted(list_of_files)
 profiles1 = nc.Dataset(f' {folder_path}\{list_of_files[0]}')
@@ -129,7 +129,7 @@ P1_obs = obs_max[1:,-1]
 "PLOTTING"
 
 
-"FINAL TIME STEP"
+"FINAL TIME STEP, WHOLE PROFILES"
 
 #Observation and modeled profiles 
 
@@ -185,15 +185,17 @@ cabauw_hourly.close()
 hours = np.arange(12,25,1)
 minute = np.arange(0,15)
 t = np.arange(datetime.datetime(2009,1,6,12), datetime.datetime(2009,1,7,00), datetime.timedelta(minutes=10)).astype(datetime.datetime)
-dt = 2
+dt = 10
+dtmin = 10
 
 #Observation and modeled profiles 
 for i in range(0,72,1):
     
+    "FIRST 200m"
     fig, ax = plt.subplots(1,2, figsize = (10,10))
     
     ax[0].plot(T_obsh[i], z[0:9], label = 'Observed profile' )
-    ax[0].plot(T[i*dt][0:9], z[0:9],  '--' , label = 'Modeled profile')
+    ax[0].plot(T[i*dtmin][0:9], z[0:9],  '--' , label = 'Modeled profile')
     ax[0].set_title("Temperature day_min")
     ax[0].set_xlabel("T [K]")
     ax[0].set_xlim([np.min([np.min(T),np.min(T_obs)]),np.max([np.max(T),np.max(T_obsh)])])
@@ -215,7 +217,7 @@ for i in range(0,72,1):
     fig, ax = plt.subplots(1,2, figsize = (10,10))
     
     ax[0].plot(q_obsh[i][0:9], z[0:9], label = 'Observed profile' )
-    ax[0].plot(qt[dt*i][0:9], z[0:9],  '--' , label = 'Modeled profile')
+    ax[0].plot(qt[dtmin*i][0:9], z[0:9],  '--' , label = 'Modeled profile')
     ax[0].set_title("Specific humidity day_min")
     ax[0].set_xlabel("qt [kg/kg]")
     ax[0].set_xlim([np.min([np.min(q_obsh),np.min(qt)]),np.max([np.max(q_obsh),np.max(qt)])])
@@ -237,7 +239,7 @@ for i in range(0,72,1):
     
     fig, ax = plt.subplots(1,2, figsize = (10,10))
     
-    ax[0].plot(ql[dt*i][0:9], z[0:9],  '--' , label = 'Modeled profile')
+    ax[0].plot(ql[dtmin*i][0:9], z[0:9],  '--' , label = 'Modeled profile')
     ax[0].set_title("Specific liquid humidity day_min")
     ax[0].set_xlabel("ql [kg/kg]")
     ax[0].set_xlim([-0.5e-5,np.max(ql)])
@@ -245,9 +247,9 @@ for i in range(0,72,1):
     ax[0].legend()
     
     ax[1].plot(ql1[dt*i][0:9], z[0:9],  '--' , label = 'Modeled profile')
-    ax[1].set_title("Specific liquid humidity day_min")
+    ax[1].set_title("Specific liquid humidity day_max")
     ax[1].set_xlabel("ql [kg/kg]")
-    ax[1].set_xlim([np.min(ql1),np.max(ql1)])
+    ax[1].set_xlim([-0.5e-5,np.max(ql1)+0.5e-5])
     ax[1].set_ylabel("Height [m]")
     ax[1].legend()
     
@@ -257,8 +259,8 @@ for i in range(0,72,1):
     
     fig, ax = plt.subplots(1,2, figsize = (10,10))
     
-    ax[0].plot(swu[dt*i], z,  '--' , label = 'Upwards')
-    ax[0].plot(abs(swd[dt*i]), z,  '--' , label = 'Downwards')
+    ax[0].plot(swu[dtmin*i], z,  '--' , label = 'Upwards')
+    ax[0].plot(abs(swd[dtmin*i]), z,  '--' , label = 'Downwards')
     ax[0].set_title("Shortwave radiation day_min")
     ax[0].set_xlabel("Radiation flux [W/m^2]")
     ax[0].set_xlim([-50,np.max([np.max(swu),np.max(abs(swd))])])
@@ -269,7 +271,7 @@ for i in range(0,72,1):
     ax[1].plot(abs(swd1[dt*i]), z,  '--' , label = 'Downwards')
     ax[1].set_title("Shortwave radiation day_max")
     ax[1].set_xlabel("Radiation flux [W/m^2]")
-    ax[0].set_xlim([-50,np.max([np.max(swu1),np.max(abs(swd1))])])
+    ax[1].set_xlim([-50,np.max([np.max(swu1),np.max(abs(swd1))])])
     ax[1].set_ylabel("Height [m]")
     ax[1].legend()
     
@@ -279,8 +281,8 @@ for i in range(0,72,1):
     
     fig, ax = plt.subplots(1,2, figsize = (10,10))
     
-    ax[0].plot(lwu[dt*i], z,  '--' , label = 'Upwards')
-    ax[0].plot(abs(lwd[dt*i]), z,  '--' , label = 'Downwards')
+    ax[0].plot(lwu[dtmin*i], z,  '--' , label = 'Upwards')
+    ax[0].plot(abs(lwd[dtmin*i]), z,  '--' , label = 'Downwards')
     ax[0].set_title("Longwave radiation day_min")
     ax[0].set_xlim([0,np.max([np.max(lwu),np.max(lwd)])])
     ax[0].set_xlabel("Radiation flux [W/m^2]")
@@ -291,12 +293,77 @@ for i in range(0,72,1):
     ax[1].plot(abs(lwd1[dt*i]), z,  '--' , label = 'Downwards')
     ax[1].set_title("Longwave radiation day_max")
     ax[1].set_xlabel("Radiation flux [W/m^2]")
-    ax[0].set_xlim([0,np.max([np.max(lwu1),np.max(lwd1)])])
+    ax[1].set_xlim([0,np.max([np.max(lwu1),np.max(lwd1)])])
     ax[1].set_ylabel("Height [m]")
     ax[1].legend()
     
     plt.suptitle(f"Profiles at time {t[i]}")
     plt.savefig(r'plots/longwave/plot' + str(i))
+    
+    
+    
+    # "WHOLE PROFILES"
+    
+    # fig, ax = plt.subplots(1,2, figsize = (10,10))
+    
+    # ax[0].plot(T[i*dtmin], z,  '--' , label = 'Modeled profile')
+    # ax[0].set_title("Temperature day_min")
+    # ax[0].set_xlabel("T [K]")
+    # ax[0].set_xlim([np.min([np.min(T),np.min(T_obs)]),np.max([np.max(T),np.max(T_obsh)])])
+    # ax[0].set_ylabel("Height [m]")
+    # ax[0].legend()
+    
+    # ax[1].plot(T1[i*dt], z,  '--' , label = 'Modeled profile')
+    # ax[1].set_title("Temperature day_max")
+    # ax[1].set_xlabel("T [K]")
+    # ax[1].set_xlim([np.min([np.min(T1),np.min(T1_obsh)]),np.max([np.max(T1_obsh),np.max(T1)])])
+    # ax[1].set_ylabel("Height [m]")
+    # ax[1].legend()
+    
+    # plt.suptitle(f"Profiles at time {t[i]}")
+    # plt.savefig(r'plots/fullprofiles/temp/plot' + str(i))
+
+    
+    fig, ax = plt.subplots(1,2, figsize = (10,10))
+    
+    ax[0].plot(qt[dtmin*i], z,  '--' , label = 'Modeled profile')
+    ax[0].set_title("Specific humidity day_min")
+    ax[0].set_xlabel("qt [kg/kg]")
+    ax[0].set_xlim([np.min([np.min(q_obsh),np.min(qt)]),np.max([np.max(q_obsh),np.max(qt)])])
+    ax[0].set_ylabel("Height [m]")
+    ax[0].legend()
+    
+    ax[1].plot(qt1[dt*i], z,  '--' , label = 'Modeled profile')
+    ax[1].set_title("Specific humidity day_max")
+    ax[1].set_xlabel("qt [kg/kg]")
+    ax[1].set_xlim([np.min([np.min(q1_obsh),np.min(qt1)]),np.max([np.max(q1_obsh),np.max(qt1)])])
+    ax[1].set_ylabel("Height [m]")
+    ax[1].legend()
+    
+    plt.suptitle(f"Profiles at time {t[i]}")
+    plt.savefig(r'plots/fullprofiles/q/plot' + str(i))
+    
+    
+    
+    fig, ax = plt.subplots(1,2, figsize = (10,10))
+    
+    ax[0].plot(ql[dtmin*i], z,  '--' , label = 'Modeled profile')
+    ax[0].set_title("Specific liquid humidity day_min")
+    ax[0].set_xlabel("ql [kg/kg]")
+    ax[0].set_xlim([-0.5e-5,np.max(ql)])
+    ax[0].set_ylabel("Height [m]")
+    ax[0].legend()
+    
+    ax[1].plot(ql1[dt*i], z,  '--' , label = 'Modeled profile')
+    ax[1].set_title("Specific liquid humidity day_max")
+    ax[1].set_xlabel("ql [kg/kg]")
+    ax[1].set_xlim([-0.5e-5,np.max(ql1)+0.5e-5])
+    ax[1].set_ylabel("Height [m]")
+    ax[1].legend()
+    
+    plt.suptitle(f"Profiles at time {t[i]}")
+    plt.savefig(r'plots/fullprofiles/ql/plot' + str(i))
+     
     
     plt.close('all')
 
@@ -350,6 +417,36 @@ with imageio.get_writer('plots/ql.gif', mode='I') as writer:
         writer.append_data(image)
 
 
+"FULL PROFILES"
+
+folder_path = r'plots/fullprofiles/temp'
+list_of_files = os.listdir(folder_path)
+
+with imageio.get_writer('plots/fullprofiles/temp.gif', mode='I') as writer:
+    for i in range(len(list_of_files)):
+        filename = str('plots/fullprofiles/temp/') + list_of_files[i]
+        image = imageio.imread(filename)
+        writer.append_data(image)
+
+
+folder_path = r'plots/fullprofiles/q'
+list_of_files = os.listdir(folder_path)
+
+with imageio.get_writer('plots/fullprofiles/q.gif', mode='I') as writer:
+    for i in range(len(list_of_files)):
+        filename = str('plots/fullprofiles/q/') + list_of_files[i]
+        image = imageio.imread(filename)
+        writer.append_data(image)
+        
+
+folder_path = r'plots/fullprofiles/ql'
+list_of_files = os.listdir(folder_path)
+
+with imageio.get_writer('plots/fullprofiles/ql.gif', mode='I') as writer:
+    for i in range(len(list_of_files)):
+        filename = str('plots/fullprofiles/ql/') + list_of_files[i]
+        image = imageio.imread(filename)
+        writer.append_data(image)
 
 
 
