@@ -67,7 +67,7 @@ iadv_qt     =  52
 iadv_sv     =  52 52
 /
 &SUBGRID
-ldelta      = .false.
+ldelta      = .true.
 cm          = 0.12
 cn          = 0.76
 ch1         = 1.
