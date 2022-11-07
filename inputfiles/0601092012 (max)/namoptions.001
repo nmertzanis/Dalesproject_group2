@@ -9,11 +9,11 @@ randqt     =  2.5e-8
 nsv        =  0
 /
 &DOMAIN
-itot       =  64
-jtot       =  64
+itot       =  40
+jtot       =  40
 kmax       =  200
-xsize      =  6400.
-ysize      =  6400.
+xsize      =  2000.
+ysize      =  2000.
 xlat       =  52.
 xlon       =  5.
 xday       =  94
