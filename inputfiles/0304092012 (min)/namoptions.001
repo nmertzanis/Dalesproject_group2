@@ -86,23 +86,23 @@ dtav        = 60
 &NAMGENSTAT
 lstat       = .true.
 dtav        = 60
-timeav      = 300
+timeav      = 60
 /
 &NAMBUDGET
-lbudget     = .false.
+lbudget     = .true.
 dtav        = 60.
 timeav      = 600. 
 /
 &NAMRADSTAT
 dtav        = 60
-timeav      = 300.
+timeav      = 60.
 lstat       = .true.
 /
 &NAMNETCDFSTATS
 lnetcdf = .true.
 /
 &NAMFIELDDUMP
- DTAV        =  60
+ DTAV        =  300
  LFIELDDUMP  = .true.
  LDIRACC     = .true.
  LBINARY     = .false.

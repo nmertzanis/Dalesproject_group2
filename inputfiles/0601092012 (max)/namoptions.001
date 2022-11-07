@@ -89,7 +89,7 @@ dtav        = 60
 timeav      = 60
 /
 &NAMBUDGET
-lbudget     = .false.
+lbudget     = .true.
 dtav        = 60.
 timeav      = 600.
 /
