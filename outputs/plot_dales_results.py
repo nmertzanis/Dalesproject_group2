@@ -49,7 +49,7 @@ cd = np.array([50, 1000]) #Cloud droplet numbers
 
 "IMPORT FILES"
 
-folder_path = r'E:\TUDELFT\2year\DALES\Final_proj\Dalesproject_group2\outputs\oldonesmin'  #enter your file path in this line
+folder_path = r'E:\TUDELFT\2year\DALES\Final_proj\Dalesproject_group2\outputs\day_min'  #enter your file path in this line
 list_of_files = os.listdir(folder_path)
 list_of_files = sorted(list_of_files)
 profiles = nc.Dataset(f' {folder_path}\{list_of_files[0]}')
@@ -77,7 +77,7 @@ T = thv/(1+0.608*(qt-ql)) * ((pres)/p0)**(287/cp)
 
 "IMPORT FILES"
 
-folder_path = r'E:\TUDELFT\2year\DALES\Final_proj\Dalesproject_group2\outputs\oldonesmax'  #enter your file path in this line
+folder_path = r'E:\TUDELFT\2year\DALES\Final_proj\Dalesproject_group2\outputs\day_max'  #enter your file path in this line
 list_of_files = os.listdir(folder_path)
 list_of_files = sorted(list_of_files)
 profiles1 = nc.Dataset(f' {folder_path}\{list_of_files[0]}')
@@ -133,7 +133,7 @@ P1_obs = obs_max[1:,-1]
 
 #Observation and modeled profiles 
 
-plt.figure()
+plt.figure(figsize=(10,7))
 plt.plot(T_obs, z, label = 'Observed profile' )
 plt.plot(T[-1], z,  '--' , label = 'Modeled profile')
 plt.title("Day_min")
@@ -141,7 +141,7 @@ plt.xlabel("T [K]")
 plt.ylabel("Height [m]")
 plt.legend()
 
-plt.figure()
+plt.figure(figsize=(10,7))
 plt.plot(T1_obs, z, label = 'Observed profile' )
 plt.plot(T1[-1], z,  '--' , label = 'Modeled profile')
 plt.title("Day_max")
@@ -150,7 +150,7 @@ plt.ylabel("Height [m]")
 plt.legend()
 
 
-plt.figure()
+plt.figure(figsize=(10,7))
 plt.plot(q_obs, z, label = 'Observed profile' )
 plt.plot(qt[-1], z,  '--' , label = 'Modeled profile')
 plt.title("Day_min")
@@ -158,7 +158,7 @@ plt.xlabel("qt [kg/kg]")
 plt.ylabel("Height [m]")
 plt.legend()
 
-plt.figure()
+plt.figure(figsize=(10,7))
 plt.plot(q1_obs, z, label = 'Observed profile' )
 plt.plot(qt1[-1], z,  '--' , label = 'Modeled profile')
 plt.title("Day_max")
@@ -186,7 +186,7 @@ hours = np.arange(12,25,1)
 minute = np.arange(0,15)
 t = np.arange(datetime.datetime(2009,1,6,12), datetime.datetime(2009,1,7,00), datetime.timedelta(minutes=10)).astype(datetime.datetime)
 dt = 10
-dtmin = 10
+dtmin = 2
 
 #Observation and modeled profiles 
 for i in range(0,72,1):
@@ -302,26 +302,26 @@ for i in range(0,72,1):
     
     
     
-    # "WHOLE PROFILES"
+    "WHOLE PROFILES"
     
-    # fig, ax = plt.subplots(1,2, figsize = (10,10))
+    fig, ax = plt.subplots(1,2, figsize = (10,10))
     
-    # ax[0].plot(T[i*dtmin], z,  '--' , label = 'Modeled profile')
-    # ax[0].set_title("Temperature day_min")
-    # ax[0].set_xlabel("T [K]")
-    # ax[0].set_xlim([np.min([np.min(T),np.min(T_obs)]),np.max([np.max(T),np.max(T_obsh)])])
-    # ax[0].set_ylabel("Height [m]")
-    # ax[0].legend()
+    ax[0].plot(T[i*dtmin], z,  '--' , label = 'Modeled profile')
+    ax[0].set_title("Temperature day_min")
+    ax[0].set_xlabel("T [K]")
+    ax[0].set_xlim([np.min([np.min(T),np.min(T_obs)]),np.max([np.max(T),np.max(T_obsh)])])
+    ax[0].set_ylabel("Height [m]")
+    ax[0].legend()
     
-    # ax[1].plot(T1[i*dt], z,  '--' , label = 'Modeled profile')
-    # ax[1].set_title("Temperature day_max")
-    # ax[1].set_xlabel("T [K]")
-    # ax[1].set_xlim([np.min([np.min(T1),np.min(T1_obsh)]),np.max([np.max(T1_obsh),np.max(T1)])])
-    # ax[1].set_ylabel("Height [m]")
-    # ax[1].legend()
+    ax[1].plot(T1[i*dt], z,  '--' , label = 'Modeled profile')
+    ax[1].set_title("Temperature day_max")
+    ax[1].set_xlabel("T [K]")
+    ax[1].set_xlim([np.min([np.min(T1),np.min(T1_obsh)]),np.max([np.max(T1_obsh),np.max(T1)])])
+    ax[1].set_ylabel("Height [m]")
+    ax[1].legend()
     
-    # plt.suptitle(f"Profiles at time {t[i]}")
-    # plt.savefig(r'plots/fullprofiles/temp/plot' + str(i))
+    plt.suptitle(f"Profiles at time {t[i]}")
+    plt.savefig(r'plots/fullprofiles/temp/plot' + str(i))
 
     
     fig, ax = plt.subplots(1,2, figsize = (10,10))
@@ -371,7 +371,7 @@ for i in range(0,72,1):
 folder_path = r'plots\shortwave'
 list_of_files = os.listdir(folder_path)
 
-with imageio.get_writer('plots/shortwave.gif', mode='I') as writer:
+with imageio.get_writer('plots/fullprofiles/shortwave.gif', mode='I') as writer:
     for i in range(len(list_of_files)):
         filename = str('plots/shortwave/') + list_of_files[i]
         image = imageio.imread(filename)
@@ -391,7 +391,7 @@ with imageio.get_writer('plots/temp.gif', mode='I') as writer:
 folder_path = r'plots\longwave'
 list_of_files = os.listdir(folder_path)
 
-with imageio.get_writer('plots/longwave.gif', mode='I') as writer:
+with imageio.get_writer('plots/fullprofiles/longwave.gif', mode='I') as writer:
     for i in range(len(list_of_files)):
         filename = str('plots/longwave/') + list_of_files[i]
         image = imageio.imread(filename)

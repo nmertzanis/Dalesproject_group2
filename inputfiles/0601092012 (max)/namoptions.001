@@ -4,8 +4,8 @@ runtime    =  43200
 dtmax      =  10.
 ladaptive  = .true.
 irandom    =  43
-randthl    =  0.0001
-randqt     =  2.5e-10
+randthl    =  0.001
+randqt     =  2.5e-8
 nsv        =  0
 /
 &DOMAIN

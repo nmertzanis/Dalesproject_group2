@@ -45,7 +45,7 @@ l_rain          =  .true.
 l_sedc          =  .true.
 l_mur_cst       =  .false.
 mur_cst         =  0
-Nc_0            = 815e4
+Nc_0            = 815e3
 sig_g           = 1.2
 /
 &NAMBULKMICROSTAT

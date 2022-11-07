@@ -9,20 +9,20 @@ randqt     =  2.5e-8
 nsv        =  0
 /
 &DOMAIN
-itot       =  64 
+itot       =  64
 jtot       =  64
 kmax       =  200
 xsize      =  6400.
 ysize      =  6400.
 xlat       =  52.
 xlon       =  -25.
-xday       =  6
+xday       =  94
 xtime      =  12.
 /
 &PHYSICS
 z0         =  2e-4
-ps         =  102700.
-thls       = 270.5
+ps         =  101500.
+thls       = 293.4
 lmoist     =  .true.
 irad       =  3
 timerad    =  60.
@@ -34,7 +34,7 @@ useMcICA   = .false.
 isurf      = 2
 z0mav      = 2e-4
 z0hav      = 2e-4
-ps         = 102700.
+ps         = 101500.
 albedoav   = 0.25
 /
 
@@ -45,12 +45,12 @@ l_rain          =  .true.
 l_sedc          =  .true.
 l_mur_cst       =  .false.
 mur_cst         =  0
-Nc_0            = 815e4
+Nc_0            = 200e7
 sig_g           = 1.2
 /
 &NAMBULKMICROSTAT
 lmicrostat      =  .false.
-dtav            = 5 
+dtav            = 5
 timeav          =  10
 /
 
@@ -58,7 +58,7 @@ timeav          =  10
 llsadv     =  .false.
 lqlnr      =  .false.
 cu         =  0
-cv         =  0 
+cv         =  0
 
 iadv_mom    =  2
 iadv_tke    =  52
@@ -81,7 +81,7 @@ ce2         = 0.51
 /
 &NAMTIMESTAT
 ltimestat   = .true.
-dtav        = 60 
+dtav        = 60
 /
 &NAMGENSTAT
 lstat       = .true.
@@ -91,7 +91,7 @@ timeav      = 60
 &NAMBUDGET
 lbudget     = .true.
 dtav        = 60.
-timeav      = 600. 
+timeav      = 600.
 /
 &NAMRADSTAT
 dtav        = 60
@@ -102,7 +102,7 @@ lstat       = .true.
 lnetcdf = .true.
 /
 &NAMFIELDDUMP
- DTAV        =  300
+ DTAV        =  60
  LFIELDDUMP  = .true.
  LDIRACC     = .true.
  LBINARY     = .false.
