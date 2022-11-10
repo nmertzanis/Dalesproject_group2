@@ -15,6 +15,9 @@ import matplotlib.pyplot as plt
 import netCDF4 as nc
 import datetime
 from scipy.interpolate import interp1d
+import seaborn as sns
+
+sns.set()
 
 R = 287 #[J/(kg*K)] dry air
 Rv = 461 #[J/(kg*K)] vapour
@@ -149,7 +152,8 @@ Td = temp - DPD
 e = e0 *np.exp(Lv/Rv*(1/T0-1/Td))
 es = e0 *np.exp(Lv/Rv*(1/T0-1/temp)) #kPa
 RH = e/es
-q = (R/Rv * es*10/P)/1000 #[kg/kg]
+qs = (R/Rv * es*10/P)#[kg/kg]
+q = RH*qs
 
 # #calculate the liquid humidity (WRONG)
 # ql = np.zeros(q.shape)
@@ -198,164 +202,178 @@ tke = 1/2 * (Up**2 + Vp**2)
 
 #plots
 
-# plt.figure()
-# plt.plot(DPD[0,:],z, label="day_min")
-# plt.plot(DPD[1,:],z, label="day_max")
-# plt.plot(DPD_o[0,0:5],height[0,0:5], 'o', label="day_min original")
-# plt.plot(DPD_o[1,0:5],height[1,0:5], 'o', label="day_max original")
-# plt.legend()
-# plt.title("Dew point depression")
+plt.figure(figsize = (8,6))
+plt.plot(DPD[0,:],z, label="6/01/2009")
+plt.plot(DPD[1,:],z, label="03/04/2009")
+plt.plot(DPD_o[0,0:9],height[0,0:9], 'o', label="6/01/2009 original")
+plt.plot(DPD_o[1,0:9],height[1,0:9], 'o', label="03/04/2009 original")
+plt.legend()
+plt.xlabel("T-Td [K]")
+plt.ylabel("Height [m]")
+plt.title("Dew point depression")
 
-plt.figure()
-plt.plot(P[0,:],z, label="day_min")
-plt.plot(P[1,:],z, label="day_max")
-plt.plot(P_o[0,0:9],height[0,0:9], 'o', label="day_min original")
-plt.plot(P_o[1,0:9],height[1,0:9], 'o', label="day_max original")
+plt.figure(figsize = (8,6))
+plt.plot(P[0,:],z, label="6/01/2009")
+plt.plot(P[1,:],z, label="03/04/2009")
+plt.plot(P_o[0,0:9],height[0,0:9], 'o', label="6/01/2009 original")
+plt.plot(P_o[1,0:9],height[1,0:9], 'o', label="03/04/2009 original")
+plt.xlabel("P [hPa]")
+plt.ylabel("Height [m]")
 plt.legend()
 plt.title("Pressure")
 
-plt.figure()
-plt.plot(temp[0,:],z, label="day_min")
-plt.plot(temp[1,:],z, label="day_max")
-plt.plot(temp_o[0,0:9],height[0,0:9], 'o', label="day_min original")
-plt.plot(temp_o[1,0:9],height[1,0:9], 'o', label="day_max original")
+plt.figure(figsize = (8,6))
+plt.plot(temp[0,:],z, label="6/01/2009")
+plt.plot(temp[1,:],z, label="03/04/2009")
+plt.plot(temp_o[0,0:9],height[0,0:9], 'o', label="6/01/2009 original")
+plt.plot(temp_o[1,0:9],height[1,0:9], 'o', label="03/04/2009 original")
+plt.xlabel("T [K]")
+plt.ylabel("Height [m]")
 plt.legend()
 plt.title("Temperature")
 
-plt.figure()
-plt.plot(thl[0,:],z, label="day_min")
-plt.plot(thl[1,:],z, label="day_max")
+plt.figure(figsize = (8,6))
+plt.plot(thl[0,:],z, label="6/01/2009")
+plt.plot(thl[1,:],z, label="03/04/2009")
+plt.xlabel("Thl [K]")
+plt.ylabel("Height [m]")
 plt.title("Liquid potential temperature")
 plt.legend()
 
-plt.figure()
-plt.plot(RH[0,:],z, label="day_min")
-plt.plot(RH[1,:],z, label="day_max")
+plt.figure(figsize = (8,6))
+plt.plot(RH[0,:],z, label="6/01/2009")
+plt.plot(RH[1,:],z, label="03/04/2009")
 plt.title("Relative humidity")
 plt.legend()
 
-plt.figure()
-plt.plot(q[0,:],z, label="day_min")
-plt.plot(q[1,:],z, label="day_max")
+plt.figure(figsize = (8,6))
+plt.plot(q[0,:],z, label="6/01/2009")
+plt.plot(q[1,:],z, label="03/04/2009")
 plt.legend()
+plt.xlabel("qt [kg/kg]")
+plt.ylabel("Height [m]")
 plt.title("Total specific humidity")
 
-plt.figure()
-plt.plot(U[0,:],z, label="day_min")
-plt.plot(U[1,:],z, label="day_max")
+plt.figure(figsize = (8,6))
+plt.plot(U[0,:],z, label="6/01/2009")
+plt.plot(U[1,:],z, label="03/04/2009")
 plt.legend()
+plt.xlabel("U [m/s]")
+plt.ylabel("Height [m]")
 plt.title("Wind speed (U)")
 
-plt.figure()
-plt.plot(V[0,:],z, label="day_min")
-plt.plot(V[1,:],z, label="day_max")
+plt.figure(figsize = (8,6))
+plt.plot(V[0,:],z, label="6/01/2009")
+plt.plot(V[1,:],z, label="03/04/2009")
 plt.legend()
+plt.xlabel("V [m/s]")
+plt.ylabel("Height [m]")
 plt.title("Wind speed (V)")
 
-plt.figure()
-plt.plot(tke[0,:],z, label="day_min")
-plt.plot(tke[1,:],z, label="day_max")
+plt.figure(figsize = (8,6))
+plt.plot(tke[0,:],z, label="6/01/2009")
+plt.plot(tke[1,:],z, label="03/04/2009")
 plt.legend()
 plt.title("TKE")
 
 
 
 
-"CREATING INPUT FILES"
+# "CREATING INPUT FILES"
 
-def format_brnum(n):
-    return '{:.10s}'.format('{:0.10f}'.format(n))
+# def format_brnum(n):
+#     return '{:.10s}'.format('{:0.10f}'.format(n))
 
-def get_backrad_input(pressure, temperature, humidity):
-    # height = np.array(radiosonde['htMan'][daytime][0:12])
-    # pressure = np.array(radiosonde['prMan'][daytime][0:15])
-    # temperature = np.array(radiosonde['tpMan'][daytime][0:15])
-    # print(pressure)
-    # humidity = get_humidity(daytime)
+# def get_backrad_input(pressure, temperature, humidity):
+#     # height = np.array(radiosonde['htMan'][daytime][0:12])
+#     # pressure = np.array(radiosonde['prMan'][daytime][0:15])
+#     # temperature = np.array(radiosonde['tpMan'][daytime][0:15])
+#     # print(pressure)
+#     # humidity = get_humidity(daytime)
 
-    # height = np.flip(height)
-    pressure = np.flip(pressure) * 100
-    temperature = np.flip(temperature)
-    humidity = np.flip(humidity)
-    ozone = np.array([1.23 * (10 ** (-6)), 0.51 * (10 ** (-6)), 2.07 * (10 ** (-7)), 1.52 * (10 ** (-7)), \
-    1.52 * (10 ** (-7)), 1.52 * (10 ** (-7)), 1.52 * (10 ** (-7)), 1.52 * (10 ** (-7)), 1.52 * (10 ** (-7)), \
-    1.52 * (10 ** (-7)), 1.52 * (10 ** (-7)), 1.52 * (10 ** (-7)), 1.52 * (10 ** (-7)), 1.52 * (10 ** (-7)), 1.52 * (10 ** (-7))])
-    water = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+#     # height = np.flip(height)
+#     pressure = np.flip(pressure) * 100
+#     temperature = np.flip(temperature)
+#     humidity = np.flip(humidity)
+#     ozone = np.array([1.23 * (10 ** (-6)), 0.51 * (10 ** (-6)), 2.07 * (10 ** (-7)), 1.52 * (10 ** (-7)), \
+#     1.52 * (10 ** (-7)), 1.52 * (10 ** (-7)), 1.52 * (10 ** (-7)), 1.52 * (10 ** (-7)), 1.52 * (10 ** (-7)), \
+#     1.52 * (10 ** (-7)), 1.52 * (10 ** (-7)), 1.52 * (10 ** (-7)), 1.52 * (10 ** (-7)), 1.52 * (10 ** (-7)), 1.52 * (10 ** (-7))])
+#     water = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
-    return pressure, temperature, humidity, ozone, water
-    # humidity = np.flip(humidity)
+#     return pressure, temperature, humidity, ozone, water
+#     # humidity = np.flip(humidity)
 
-def add_brline(pressure, temperature, humidity, ozone, water):
+# def add_brline(pressure, temperature, humidity, ozone, water):
 
-    return format_brnum(pressure) + "      " +  format_brnum(temperature) + "      " +  format_brnum(humidity)\
-    + "      " +  format_brnum(ozone) + "      " + str(water) + "\n"
-
-
-# Profile for day_min
-profile = open("prof.inp.001.txt", "w")
-profile.write("#ASTEX case using prescribed vertical grid, Nlev = 427 1 date" + day_min +'\n' \
-      "height(m)   thl(K)     qt(kg/kg)       u(m/s)     v(m/s)     tke(m2/s2)\n")
+#     return format_brnum(pressure) + "      " +  format_brnum(temperature) + "      " +  format_brnum(humidity)\
+#     + "      " +  format_brnum(ozone) + "      " + str(water) + "\n"
 
 
-def format_num(n):
-    return '{:.7s}'.format('{:0.4f}'.format(n))
-
-def format_q(q):
-    return "{:.3E}".format(q)
-
-def add_line(z, thl, qt, u, v, tke):
-
-    return "      " + format_num(z) + "      " \
-    + format_num(thl) + "      " + format_q(qt) + "      " \
-    + format_num(u) + "      " + format_num(v) + "      " \
-    + format_num(tke) + "\n"
-
-profile = open("prof.inp.001.txt", "a")
+# # Profile for day_min
+# profile = open("prof.inp.001.txt", "w")
+# profile.write("#ASTEX case using prescribed vertical grid, Nlev = 427 1 date" + day_min +'\n' \
+#       "height(m)   thl(K)     qt(kg/kg)       u(m/s)     v(m/s)     tke(m2/s2)\n")
 
 
-#save to file
-for i in range(0,len(z),1):
-    profile.write(add_line(z[i], thl[0,i], q[0,i], U[0,i], V[0,i], tke[0,i]))
+# def format_num(n):
+#     return '{:.7s}'.format('{:0.4f}'.format(n))
+
+# def format_q(q):
+#     return "{:.3E}".format(q)
+
+# def add_line(z, thl, qt, u, v, tke):
+
+#     return "      " + format_num(z) + "      " \
+#     + format_num(thl) + "      " + format_q(qt) + "      " \
+#     + format_num(u) + "      " + format_num(v) + "      " \
+#     + format_num(tke) + "\n"
+
+# profile = open("prof.inp.001.txt", "a")
+
+
+# #save to file
+# for i in range(0,len(z),1):
+#     profile.write(add_line(z[i], thl[0,i], q[0,i], U[0,i], V[0,i], tke[0,i]))
 
 
 
-# Profile for day_max
-profile = open("prof.inp.002.txt", "w")
-profile.write("#ASTEX case using prescribed vertical grid, Nlev = 427 1 date=" + day_max + '\n' \
-      "height(m)   thl(K)     qt(kg/kg)       u(m/s)     v(m/s)     tke(m2/s2)\n")
+# # Profile for day_max
+# profile = open("prof.inp.002.txt", "w")
+# profile.write("#ASTEX case using prescribed vertical grid, Nlev = 427 1 date=" + day_max + '\n' \
+#       "height(m)   thl(K)     qt(kg/kg)       u(m/s)     v(m/s)     tke(m2/s2)\n")
 
-profile = open("prof.inp.002.txt", "a")
+# profile = open("prof.inp.002.txt", "a")
 
-#save to file
-for i in range(0,len(z),1):
-    profile.write(add_line(z[i], thl[1,i], q[1,i], U[1,i], V[1,i], tke[1,i]))
-profile.close()
+# #save to file
+# for i in range(0,len(z),1):
+#     profile.write(add_line(z[i], thl[1,i], q[1,i], U[1,i], V[1,i], tke[1,i]))
+# profile.close()
 
-brprofile = open("backradmax.inp.txt", "w")
-
-
-currnum = 1
-
-temp = np.array(profiles['tpMan'])
-P = np.array(profiles['prMan']) #hPa
-DPD = np.array(profiles['tdMan'])
-temp = temp[ind,0:15]
-P = P[ind,0:15]
-DPD = DPD[ind, 0:15]
-
-T0 = 273.15
-Td = temp - DPD
-e = e0 *np.exp(Lv/Rv*(1/T0-1/Td))
-es = e0 *np.exp(Lv/Rv*(1/T0-1/temp)) #kPa
-RH = e/es
-q = (R/Rv * es*10/P)/1000 #[kg/kg]
-
-pressure, temperature, humidity, ozone, water = get_backrad_input(P[currnum][0:15], temp[currnum][0:15], q[currnum][0:15])
-
-brprofile.write(format_num(temperature[-1]) +  "      15 \n")
+# brprofile = open("backradmax.inp.txt", "w")
 
 
-for i in range(0, 15):
-    brprofile.write(add_brline(pressure[i], temperature[i], humidity[i], ozone[i], water[i]))
+# currnum = 1
 
-brprofile.close()
+# temp = np.array(profiles['tpMan'])
+# P = np.array(profiles['prMan']) #hPa
+# DPD = np.array(profiles['tdMan'])
+# temp = temp[ind,0:15]
+# P = P[ind,0:15]
+# DPD = DPD[ind, 0:15]
+
+# T0 = 273.15
+# Td = temp - DPD
+# e = e0 *np.exp(Lv/Rv*(1/T0-1/Td))
+# es = e0 *np.exp(Lv/Rv*(1/T0-1/temp)) #kPa
+# RH = e/es
+# q = (R/Rv * es*10/P)/1000 #[kg/kg]
+
+# pressure, temperature, humidity, ozone, water = get_backrad_input(P[currnum][0:15], temp[currnum][0:15], q[currnum][0:15])
+
+# brprofile.write(format_num(temperature[-1]) +  "      15 \n")
+
+
+# for i in range(0, 15):
+#     brprofile.write(add_brline(pressure[i], temperature[i], humidity[i], ozone[i], water[i]))
+
+# brprofile.close()

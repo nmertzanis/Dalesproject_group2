@@ -32,8 +32,8 @@ p0 = 1000
 z = np.arange(12.5,5000,25)
 
 #Import files
-cabauw1= nc.Dataset('cesar_tower_meteo_lb1_t10_v1.2_200901.nc')
-cabauw4= nc.Dataset('cesar_tower_meteo_lb1_t10_v1.2_200904.nc')
+cabauw4= nc.Dataset('cesar_tower_meteo_lb1_t10_v1.2_200905.nc')
+cabauw1= nc.Dataset('cesar_tower_meteo_lb1_t10_v1.2_200805.nc')
 profiles = nc.Dataset('raob_soundings13628.cdf')
 
 #Import relevant variables
@@ -59,6 +59,9 @@ wd = np.array(profiles['wdMan'])
 ws = np.array(profiles['wsMan'])
 time = np.array(profiles['synTime'])
 
+# height_c4 = height_c4[::-1]
+# height_c1 = height_c1[::-1]
+
 #Select days we use
 "FOR RADIOSONDES"
 #Create list of dates (to translate the time in seconds to the time in date format)
@@ -73,8 +76,8 @@ for i in range (len(rel_time)):
     dateList.append(date_1 + datetime.timedelta(days=rel_time[i]))
 
 #Selected days for initial observations crossing with CCN plots:
-day_min = '06/01/09 12'
-day_max = '03/04/09 12'
+day_min = '12/05/08 12'
+day_max = '30/05/09 12'
 date_min = datetime.datetime.strptime(day_min, "%d/%m/%y %H")
 date_max = datetime.datetime.strptime(day_max, "%d/%m/%y %H")
 
@@ -91,8 +94,8 @@ ws = ws[ind,0:x]
 
 
 "FOR CABAUW"
-daymin = 20090106
-daymax = 20090403
+daymin = 20080512
+daymax = 20090530
 ind_c1 = np.where((date_c1 == daymin) | (date_c1 == daymin+1))[0][72:145] #to get from 12:00 to 00
 ind_c4 = np.where((date_c4 == daymax) | (date_c4 == daymax+1))[0][72:145]
 
@@ -107,13 +110,56 @@ wd_c4 = wd_c4[ind_c4,:]
 ws_c4 = ws_c4[ind_c4,:]
 q_c4 = q_c4[ind_c4,:]
 
-#Fixing wind speed outliers
+#Fixing wind speed and direction outliers
 for i in range(len(ws_c1)):
     for j in range(ws_c1.shape[1]):
         if abs(ws_c1[i,j]) > 100:
             ws_c1[i,j]=ws_c1[i,j-1]
         if abs(ws_c4[i,j]) > 100:
             ws_c4[i,j]=ws_c4[i,j-1]
+        if abs(wd_c1[i,j])>360:
+            wd_c1[i,j]=wd_c1[i,j-1]
+        if abs(wd_c4[i,j])>360:
+            wd_c4[i,j]=wd_c4[i,j-1]
+        
+dim = ws.shape
+for i in range(dim[0]):
+    for j in range(dim[1]):
+        if ws[i,j]>100:
+            ws[i,j] = ws[i,j-1]
+
+#Calculate wind speed in x and y direction (U and V)
+
+dim = wd_c1.shape
+for i in range(dim[0]):
+    for j in range(dim[1]):
+        if wd_c1[i,j]<180:
+            wd_c1[i,j] = wd_c1[i,j] +180
+        elif wd_c1[i,j]>180:
+            wd_c1[i,j]=wd_c1[i,j]-180
+        if wd_c4[i,j]<180:
+            wd_c4[i,j] = wd_c4[i,j] +180
+        elif wd_c4[i,j]>180:
+            wd_c4[i,j]=wd_c4[i,j]-180
+
+
+dim = wd.shape
+for i in range(dim[0]):
+    for j in range(dim[1]):
+        if wd[i,j]<180:
+            wd[i,j] = wd[i,j] +180
+        elif wd[i,j]>180:
+            wd[i,j]=wd[i,j]-180
+    
+#Angle assumed to be from the north
+U = ws*np.sin(np.deg2rad(wd))
+V = ws*np.cos(np.deg2rad(wd))
+    
+U_c1 = ws_c1*np.cos(np.deg2rad(wd_c1))
+V_c1 = ws_c1*np.sin(np.deg2rad(wd_c1))
+
+U_c4 = ws_c4*np.cos(np.deg2rad(wd_c4))
+V_c4 = ws_c4*np.sin(np.deg2rad(wd_c4))
 
 
 "INTERPOLATION"
@@ -137,70 +183,77 @@ dim_c = [len(ind_c1),9]
 temp_interp = np.zeros(dim)
 DPD_interp = np.zeros(dim)
 P_interp = np.zeros(dim)
-ws_interp = np.zeros(dim)
-wd_interp = np.zeros(dim)
+U_interp = np.zeros(dim)
+V_interp = np.zeros(dim)
 
 tempc1_interp = np.zeros(dim_c)
-wsc1_interp = np.zeros(dim_c)
-wdc1_interp = np.zeros(dim_c)
+U_c1_interp = np.zeros(dim_c)
+V_c1_interp = np.zeros(dim_c)
 qc1_interp = np.zeros(dim_c)
 
 tempc4_interp = np.zeros(dim_c)
-wsc4_interp = np.zeros(dim_c)
-wdc4_interp = np.zeros(dim_c)
+U_c4_interp = np.zeros(dim_c)
+V_c4_interp = np.zeros(dim_c)
 qc4_interp = np.zeros(dim_c)
 
 for i in range(len(ind)):
     temp_interp[i] = interpolate(height[i], temp[i], z, linear=False)
     DPD_interp[i] = interpolate(height[i], DPD[i], z, linear=False)
     P_interp[i] = interpolate(height[i], P[i], z, linear=False)
-    wd_interp[i] = interpolate(height[i], wd[i], z, linear=False)
-    ws_interp[i] = interpolate(height[i], ws[i], z, linear=False)
+    U_interp[i] = interpolate(height[i], U[i], z, linear=False)
+    V_interp[i] = interpolate(height[i], V[i], z, linear=False)
 
 for i in range(len(ind_c1)):
     tempc1_interp[i] = interpolate(height_c1, temp_c1[i], z[0:9], linear=False)
-    wdc1_interp[i] = interpolate(height_c1, wd_c1[i], z[0:9], linear=False)
-    wsc1_interp[i] = interpolate(height_c1, ws_c1[i], z[0:9], linear=False)
+    U_c1_interp[i] = interpolate(height_c1, U_c1[i], z[0:9], linear=False)
+    V_c1_interp[i] = interpolate(height_c1, V_c1[i], z[0:9], linear=False)
     qc1_interp[i] = interpolate(height_c1, q_c1[i], z[0:9], linear=False)
 
     tempc4_interp[i] = interpolate(height_c4, temp_c4[i], z[0:9], linear=False)
-    wdc4_interp[i] = interpolate(height_c4, wd_c4[i], z[0:9], linear=False)
-    wsc4_interp[i] = interpolate(height_c4, ws_c4[i], z[0:9], linear=False)
-    qc4_interp[i] = interpolate(height_c1, q_c4[i], z[0:9], linear=False)
+    U_c4_interp[i] = interpolate(height_c4, U_c4[i], z[0:9], linear=False)
+    V_c4_interp[i] = interpolate(height_c4, V_c4[i], z[0:9], linear=False)
+    qc4_interp[i] = interpolate(height_c4, q_c4[i], z[0:9], linear=False)
 
 
 #Save original data (to plot later) and change names of interpolated ones (to use for calculations)
 temp_o = temp
 DPD_o = DPD
 P_o = P
-ws_o = ws
-wd_o = wd
+U_o = U
+V_o = V
+
 
 temp = temp_interp
 DPD = DPD_interp
 P = P_interp
-ws = ws_interp
-wd = wd_interp
+U = U_interp
+V = V_interp
 
 tempc1_o = temp_c1
-wsc1_o = ws_c1
-wdc1_o = wd_c1
 qc1_o = q_c1
+Uc1_o = U_c1
+Vc1_o = V_c1
 
 temp_c1 = tempc1_interp
-ws_c1= wsc1_interp
-wd_c1 = wdc1_interp
 q_c1 = qc1_interp
+U_c1 = U_c1_interp
+V_c1 = V_c1_interp
 
 tempc4_o = temp_c4
-wsc4_o = ws_c4
-wdc4_o = wd_c4
 qc4_o = q_c4
+Uc4_o = U_c4
+Vc4_o = V_c4
 
 temp_c4 = tempc4_interp
-ws_c4 = wsc4_interp
-wd_c4 = wdc4_interp
 q_c4 = qc4_interp
+U_c4 = U_c4_interp
+V_c4 = V_c4_interp
+
+#Fixing DPD outliers
+for i in range(DPD.shape[0]):
+    for j in range(DPD.shape[1]):
+        if DPD[i,j] < 0:
+            DPD[i,j]=0
 
 
 "CALCULATIONS"
@@ -230,16 +283,12 @@ q = RH*qs
 #Calculate potential temperature (clear case -> th = thl)
 thl = temp * (p0/P)**(R/cp)
 
-#Calculate wind speed in x and y direction (U and V)
 
-#Angle assumed to be from the north
-U = ws*np.sin(np.deg2rad(wd))
-V = ws*np.cos(np.deg2rad(wd))
 
 #Calculating TKE
 
 Cd = 0.005 #drag coefficient for praire
-h_bl = 1000 #change manually depending on where the inversion jump is
+h_bl = 1500 #change manually depending on where the inversion jump is
 w10 = U[:,1] #wind speed at 7.5m (should be at 10m, approximation)
 u_st = np.sqrt(Cd * w10**2)
 Up = np.zeros(dim)
@@ -256,6 +305,11 @@ for i in range(len(u_st)):
 
 tke = 1/2 * (Up**2 + Vp**2)
 
+#Fixing TKE outliers
+for i in range(tke.shape[0]):
+    for j in range(tke.shape[1]):
+        if tke[i,j] > 1:
+            tke[i,j]=1
 
 
 
@@ -264,119 +318,135 @@ tke = 1/2 * (Up**2 + Vp**2)
 thl_c1 = temp_c1 * (p0/P[0,0:9])**(R/cp)
 thl_c4 = temp_c4 * (p0/P[1,0:9])**(R/cp)
 
-U_c1 = ws_c1*np.sin(np.deg2rad(wd_c1))
-V_c1 = ws_c1*np.cos(np.deg2rad(wd_c1))
-
-U_c4 = ws_c1*np.sin(np.deg2rad(wd_c4))
-V_c4 = ws_c1*np.cos(np.deg2rad(wd_c4))
-
-
-
-
 
 "PLOTTING PROFILES"
 
 #First 200m
-plt.figure()
-plt.plot(temp[0,0:9],z[0:9], label="day_min")
-plt.plot(temp[1,0:9],z[0:9], label="day_max")
-plt.plot(temp_o[0,0:2],height[0,0:2], 'o', label="day_min original")
-plt.plot(temp_o[1,0:2],height[1,0:2], 'o', label="day_max original")
-plt.plot(temp_c1[0,:],z[0:9],'--', label="day_min_c")
-plt.plot(temp_c4[0,:],z[0:9],'--', label="day_max_c")
-plt.plot(tempc1_o[0,:],height_c1,'o', label="day_min_c")
-plt.plot(tempc4_o[0,:],height_c4,'o', label="day_max_c")
+plt.figure(figsize=(8,6))
+plt.plot(temp[0,0:9],z[0:9], label=f"{date_min} Radiosonde")
+plt.plot(temp[1,0:9],z[0:9], label=f"{date_max}  Radiosonde")
+# plt.plot(temp_o[0,0:2],height[0,0:2], 'o', label="06/01/09 original")
+# plt.plot(temp_o[1,0:2],height[1,0:2], 'o', label="03/04/2009 original")
+plt.plot(temp_c1[0,:],z[0:9],'--', label=f"{date_min}  Cabauw")
+plt.plot(temp_c4[0,:],z[0:9],'--', label=f"{date_max}  Cabauw")
+plt.plot(tempc1_o[0,:],height_c1,'o', label=f"{date_min}  Cabauw original")
+plt.plot(tempc4_o[0,:],height_c4,'o', label=f"{date_max}  Cabauw original")
 plt.xlabel('Temperature [K]')
 plt.ylabel('Height [m]')
 plt.legend()
 plt.title("Temperature")
 
-plt.figure()
-plt.plot(thl[0,0:9],z[0:9], label="day_min")
-plt.plot(thl[1,0:9],z[0:9], label="day_max")
-plt.plot(thl_c1[0,:],z[0:9],'--', label="day_min_c")
-plt.plot(thl_c4[0,:],z[0:9],'--', label="day_max_c")
+plt.figure(figsize=(8,6))
+plt.plot(thl[0,0:9],z[0:9], label=f"{date_min}  Radiosonde")
+plt.plot(thl[1,0:9],z[0:9], label=f"{date_max}  Radiosonde")
+plt.plot(thl_c1[0,:],z[0:9],'--', label=f"{date_min} Cabauw")
+plt.plot(thl_c4[0,:],z[0:9],'--', label=f"{date_max} Cabauw")
 plt.xlabel('thl [K]')
 plt.ylabel('Height [m]')
 plt.title("Liquid potential temperature")
 plt.legend()
 
-plt.figure()
-plt.plot(q[0,0:9],z[0:9], label="day_min")
-plt.plot(q[1,0:9],z[0:9], label="day_max")
-plt.plot(q_c1[0,:],z[0:9],'--', label="day_min_c")
-plt.plot(q_c4[0,:],z[0:9],'--', label="day_max_c")
-plt.plot(qc1_o[0,:],height_c1,'o', label="day_min_c")
-plt.plot(qc4_o[0,:],height_c4,'o', label="day_max_c")
+plt.figure(figsize=(8,6))
+plt.plot(q[0,0:9],z[0:9], label=f"{date_min}  Radiosonde")
+plt.plot(q[1,0:9],z[0:9], label=f"{date_max} Radiosonde")
+plt.plot(q_c1[0,:],z[0:9],'--', label=f"{date_min}  Cabauw")
+plt.plot(q_c4[0,:],z[0:9],'--', label=f"{date_max}  Cabauw")
+plt.plot(qc1_o[0,:],height_c1,'o', label=f"{date_min}  Cabauw original")
+plt.plot(qc4_o[0,:],height_c4,'o', label=f"{date_max}  Cabauw original")
 plt.xlabel('qt [kg/kg]')
 plt.ylabel('Height [m]')
 plt.legend()
 plt.title("Total specific humidity")
 
 plt.figure()
-plt.plot(U[0,0:9],z[0:9], label="day_min")
-plt.plot(U[1,0:9],z[0:9], label="day_max")
-plt.plot(U_c1[0,:],z[0:9],'--', label="day_min_c")
-plt.plot(U_c4[0,:],z[0:9],'--', label="day_max_c")
+plt.plot(U[0,0:9],z[0:9], label=f"{date_min} ")
+plt.plot(U[1,0:9],z[0:9], label=f"{date_max} ")
+plt.plot(Uc1_o[0,:],z[0:7],'o', label=f"{date_min} c")
+plt.plot(Uc4_o[0,:],z[0:7],'o', label=f"{date_max} c")
+plt.plot(U_c1[0,:],z[0:9],'--', label=f"{date_min} ")
+plt.plot(U_c4[0,:],z[0:9],'--', label=f"{date_max} c")
 plt.xlabel('Wind Speed [m/s]')
 plt.ylabel('Height [m]')
 plt.legend()
 plt.title("Wind speed (U)")
 
 plt.figure()
-plt.plot(V[0,0:9],z[0:9], label="day_min")
-plt.plot(V[1,0:9],z[0:9], label="day_max")
-plt.plot(V_c1[0,:],z[0:9],'--', label="day_min_c")
-plt.plot(V_c4[0,:],z[0:9],'--', label="day_max_c")
+plt.plot(V[0,0:9],z[0:9], label=f"{date_min}" )
+plt.plot(V[1,0:9],z[0:9], label=f"{date_max} ")
+plt.plot(V_c1[0,:],z[0:9],'--', label=f"{date_min} ")
+plt.plot(Vc1_o[0,:],z[0:7],'o', label=f"{date_min} ")
+plt.plot(Vc4_o[0,:],z[0:7],'o', label=f"{date_max} c")
+plt.plot(V_c4[0,:],z[0:9],'--', label=f"{date_max} c")
 plt.xlabel('Wind Speed [m/s]')
 plt.ylabel('Height [m]')
 plt.legend()
-plt.title("Wind speed (U)")
+plt.title("Wind speed (V)")
 
-#Whole profile
-plt.figure()
-plt.plot(temp[0,:],z, label="day_min")
-plt.plot(temp[1,:],z, label="day_max")
-plt.plot(temp_o[0,0:6],height[0,0:6], 'o', label="day_min original")
-plt.plot(temp_o[1,0:6],height[1,0:6], 'o', label="day_max original")
+# Whole profile
+plt.figure(figsize=(8,6))
+plt.plot(temp[0,:],z, label=f"{date_min}" )
+plt.plot(temp[1,:],z, label=f"{date_max} ")
+plt.plot(temp_c1[0,:],z[0:9],'--', label=f"{date_min}  Cabauw")
+plt.plot(temp_c4[0,:],z[0:9],'--', label=f"{date_max}  Cabauw")
+plt.plot(temp_o[0,0:6],height[0,0:6], 'o', label=f"{date_min} original")
+plt.plot(temp_o[1,0:6],height[1,0:6], 'o', label=f"{date_max}  original")
 plt.xlabel('Temperature [K]')
 plt.ylabel('Height [m]')
 plt.legend()
 plt.title("Temperature")
 
-plt.figure()
-plt.plot(thl[0,:],z, label="day_min")
-plt.plot(thl[1,:],z, label="day_max")
-plt.xlabel('Temperature [K]')
+
+plt.figure(figsize=(8,6))
+plt.plot(thl[0,:],z, label=f"{date_min} ")
+plt.plot(thl[1,:],z, label=f"{date_max} ")
+plt.plot(thl_c1[0,:],z[0:9],'--', label=f"{date_min} Cabauw")
+plt.plot(thl_c4[0,:],z[0:9],'--', label=f"{date_max}  Cabauw")
+plt.xlabel('thl [K]')
 plt.ylabel('Height [m]')
 plt.title("Liquid potential temperature")
 plt.legend()
 
-plt.figure()
-plt.plot(q[0,:],z, label="day_min")
-plt.plot(q[1,:],z, label="day_max")
+plt.figure(figsize=(8,6))
+plt.plot(q[0,:],z, label=f"{date_min} ")
+plt.plot(q[1,:],z, label=f"{date_max} ")
+plt.plot(q_c1[0,:],z[0:9],'--', label=f"{date_min}  Cabauw")
+plt.plot(q_c4[0,:],z[0:9],'--', label=f"{date_max}  Cabauw")
+plt.xlabel('qt [kg/kg]')
+plt.ylabel('Height [m]')
 plt.legend()
 plt.title("Total specific humidity")
 
-plt.figure()
-plt.plot(U[0,:],z, label="day_min")
-plt.plot(U[1,:],z, label="day_max")
+plt.figure(figsize=(8,6))
+plt.plot(U[0,:],z, label=f"{date_min}" )
+plt.plot(U[1,:],z, label="03/04/09")
+plt.plot(U_o[0,0:5],height[0,0:5], 'o', label=f"{date_min}" )
+plt.plot(U_o[1,0:5],height[0,0:5],'o', label=f"{date_max} ")
+plt.plot(U_c1[0,:],z[0:9],'--', label=f"{date_min} Cabauw")
+plt.plot(U_c4[0,:],z[0:9],'--', label=f"{date_max} Cabauw")
 plt.legend()
+plt.xlabel('Wind Speed [m/s]')
+plt.ylabel('Height [m]')
 plt.title("Wind speed (U)")
 
-plt.figure()
-plt.plot(V[0,:],z, label="day_min")
-plt.plot(V[1,:],z, label="day_max")
+plt.figure(figsize=(8,6))
+plt.plot(V[0,:],z, label=f"{date_min} ")
+plt.plot(V[1,:],z, label=f"{date_max} ")
+plt.plot(V_o[0,0:5],height[0,0:5], 'o', label=f"{date_min} ")
+plt.plot(V_o[1,0:5],height[0,0:5],'o', label=f"{date_max}")
+plt.plot(V_c1[0,:],z[0:9],'--', label=f"{date_min}  Cabauw")
+plt.plot(V_c4[0,:],z[0:9],'--', label=f"{date_max}Cabauw")
+plt.xlabel('Wind Speed [m/s]')
+plt.ylabel('Height [m]')
 plt.legend()
 plt.title("Wind speed (V)")
 
-#Other variables
+# #Other variables
 
-# plt.figure()
-# plt.plot(tke[0,:],z, label="day_min")
-# plt.plot(tke[1,:],z, label="day_max")
-# plt.legend()
-# plt.title("TKE")
+plt.figure()
+plt.plot(tke[0,:],z, label=f"{date_min} ")
+plt.plot(tke[1,:],z, label=f"{date_max}")
+plt.legend()
+plt.title("TKE")
 
 # plt.figure()
 # plt.plot(RH[0,:],z, label="day_min")
@@ -391,6 +461,19 @@ plt.title("Wind speed (V)")
 # plt.plot(P_o[1,0:6],height[1,0:6], 'o', label="day_max original")
 # plt.legend()
 # plt.title("Pressure")
+
+# plt.figure()
+# plt.plot(DPD[0,:],z, label="day_min")
+# plt.plot(DPD[1,:],z, label="day_max")
+# plt.plot(DPD_o[0,0:6],height[0,0:6], 'o', label="day_min original")
+# plt.plot(DPD_o[1,0:6],height[1,0:6], 'o', label="day_max original")
+# plt.legend()
+# plt.title("Dew point depression")
+
+print("Vgeo_min = ", np.mean(V_o[0,:]), '\n')
+print("Ugeo_min = ", np.mean(U_o[0,:]), '\n')
+print("Vgeo_max = ", np.mean(V_o[1,:]), '\n')
+print("Ugeo_max = ", np.mean(U_o[1,:]), '\n')
 
 
 
@@ -427,7 +510,7 @@ def add_brline(pressure, temperature, humidity, ozone, water):
 
 
 # Profile for day_min
-profile = open("prof.inp.001.txt", "w")
+profile = open("prof.inpmin.txt", "w")
 profile.write("date" + day_min +'\n' \
       "height(m)   thl(K)     qt(kg/kg)       u(m/s)     v(m/s)     tke(m2/s2)\n")
 
@@ -445,30 +528,30 @@ def add_line(z, thl, qt, u, v, tke):
     + format_num(u) + "      " + format_num(v) + "      " \
     + format_num(tke) + "\n"
 
-profile = open("prof.inp.001.txt", "a")
+profile = open("prof.inpmin.txt", "a")
 
 
 #save to file
 for i in range(0,len(z),1):
-    if i < 8:
-        profile.write(add_line(z[i], thl_c1[0,i], q_c1[0,i], U_c1[0,i], V_c1[0,i], tke[0,i]))
-    else:
-        profile.write(add_line(z[i], thl[0,i], q[0,i], U[0,i], V[0,i], tke[0,i]))
+    # if i < 8:
+    #     profile.write(add_line(z[i], thl_c1[0,i], q_c1[0,i], U_c1[0,i], V_c1[0,i], tke[0,i]))
+    # else:
+    profile.write(add_line(z[i], thl[0,i], q[0,i], U[0,i], V[0,i], tke[0,i]))
 
 
 
 # Profile for day_max
-profile = open("prof.inp.002.txt", "w")
+profile = open("prof.inpmax.txt", "w")
 profile.write("date=" + day_max + '\n' \
       "height(m)   thl(K)     qt(kg/kg)       u(m/s)     v(m/s)     tke(m2/s2)\n")
 
-profile = open("prof.inp.002.txt", "a")
+profile = open("prof.inpmax.txt", "a")
 
 #save to file
 for i in range(0,len(z),1):
-    if i < 8:
-        profile.write(add_line(z[i], thl_c4[0,i], q_c4[0,i], U_c4[0,i], V_c4[0,i], tke[0,i]))
-    else:
+    # if i < 8:
+    #     profile.write(add_line(z[i], thl_c4[0,i], q_c4[0,i], U_c4[0,i], V_c4[0,i], tke[0,i]))
+    # else:
         profile.write(add_line(z[i], thl[1,i], q[1,i], U[1,i], V[1,i], tke[1,i]))
 
 
